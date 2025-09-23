@@ -2,6 +2,7 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { IntlProvider } from 'react-intl'
 import CreateInstance from './components/CreateInstance';
 import EditInstance from './components/EditInstance';
+import EditHtmlTemplate from './components/EditHtmlTemplate';
 import DeployPanel from './components/DeployPanel';
 import LoadingScreen from './components/LoadingScreen';
 import { appInitialState, appReducer } from './reducers/state';
@@ -52,7 +53,11 @@ function App(): JSX.Element {
       }}
     >
       <IntlProvider locale={locale.code} messages={locale.messages}>
-        {Object.keys(appState.instance.abi).length > 0 ? (
+        {appState.instance.htmlTemplate ? (
+          <div className="container-fluid pt-3">
+            <EditHtmlTemplate />
+          </div>
+        ) : Object.keys(appState.instance.abi).length > 0 ? (
           <div className="row m-0 pt-3">
             <EditInstance />
             <DeployPanel />

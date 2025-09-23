@@ -451,16 +451,15 @@ export function RunTabUI(props: RunTabProps) {
             getVersion={getVersion}
             getFuncABIInputs={getFuncABIValues}
             exEnvironment={runTab.selectExEnv}
-            editInstance={(instance) => {
-              const { metadata, abi, object } = instance.contractData;
+            editInstance={(address, abi, name, devdoc, metadata, htmlTemplate) => {
               plugin.call('quick-dapp', 'edit', {
-                address: instance.address,
-                abi: abi,
-                name: instance.name,
+                address,
+                abi,
+                name,
                 network: runTab.networkName,
-                devdoc: object.devdoc,
-                methodIdentifiers: object.evm.methodIdentifiers,
+                devdoc: devdoc,
                 solcVersion: JSON.parse(metadata).compiler.version,
+                htmlTemplate
               })
             }}
           />

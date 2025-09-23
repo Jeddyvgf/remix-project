@@ -48,18 +48,8 @@ function DeployPanel(): JSX.Element {
   }, [deployState, teardownState])
 
   return (
-    <div className="col-3 d-inline-block">
+    <div className="d-inline-block">
       <h3 className="mb-3" data-id="quick-dapp-admin">QuickDapp <FormattedMessage id="quickDapp.admin" /></h3>
-      <Button
-        size="sm"
-        style={{ height: 32 }}
-        data-id="resetFunctions"
-        onClick={() => {
-          resetInstance();
-        }}
-      >
-        <FormattedMessage id="quickDapp.resetFunctions" />
-      </Button>
       <Button
         size="sm"
         style={{ height: 32, width: 100 }}
@@ -275,7 +265,6 @@ function DeployPanel(): JSX.Element {
             </label>
           </div>
         </Form.Group>
-        <ThemeUI />
         <Button
           data-id="deployDapp"
           variant="primary"

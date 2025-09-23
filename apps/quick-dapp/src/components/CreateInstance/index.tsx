@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, Button, Form } from 'react-bootstrap';
+import React, { useState, useRef, useEffect } from 'react';
+import { Alert, Button, Form, Card, Row, Col } from 'react-bootstrap';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { initInstance } from '../../actions';
 
@@ -7,11 +7,25 @@ const CreateInstance: React.FC = () => {
   const intl = useIntl()
   const [formVal, setFormVal] = useState({
     address: '',
-    abi: [],
+    htmlTemplate: '',
     name: '',
     network: '',
   });
   const [error, setError] = useState('')
+  const [showPreview, setShowPreview] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  useEffect(() => {
+    if (iframeRef.current && formVal.htmlTemplate && showPreview) {
+      const iframe = iframeRef.current;
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (doc) {
+        doc.open();
+        doc.write(formVal.htmlTemplate);
+        doc.close();
+      }
+    }
+  }, [formVal.htmlTemplate, showPreview])
   return (
     <Form
       className="w-50 m-auto"
@@ -32,29 +46,63 @@ const CreateInstance: React.FC = () => {
         />
       </Form.Group>
 
-      <Form.Group className="mb-2" controlId="formAbi">
-        <Form.Label className="text-uppercase mb-0">abi</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          type="abi"
-          placeholder={intl.formatMessage({ id: 'quickDapp.enterAbi' })}
-          onChange={(e) => {
-            setError('')
-            let abi = [];
-            if (e.target.value !== '') {
-              try {
-                abi = JSON.parse(e.target.value);
-              } catch (error) {
-                setError(error.toString())
-              }
-            }
-            setFormVal({ ...formVal, abi });
-          }}
-        />
-        {error && <Form.Text className='text-danger'>
-          {error}
-        </Form.Text>}
+      <Form.Group className="mb-2" controlId="formHtmlTemplate">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Form.Label className="text-uppercase mb-0">HTML Template</Form.Label>
+          {formVal.htmlTemplate && (
+            <Button 
+              size="sm" 
+              variant="outline-primary"
+              onClick={() => setShowPreview(!showPreview)}
+            >
+              {showPreview ? 'Hide Preview' : 'Show Preview'}
+            </Button>
+          )}
+        </div>
+        <Row>
+          <Col lg={showPreview ? 6 : 12}>
+            <Form.Control
+              as="textarea"
+              rows={10}
+              type="htmlTemplate"
+              placeholder={intl.formatMessage({ id: 'quickDapp.enterHtmlTemplate', defaultMessage: 'Enter your HTML template for the dApp frontend...' })}
+              value={formVal.htmlTemplate}
+              onChange={(e) => {
+                setError('')
+                const template = e.target.value;
+                if (template && !template.includes('<html') && !template.includes('<!DOCTYPE')) {
+                  setError('Please provide a complete HTML document with <html> or <!DOCTYPE> tag');
+                }
+                setFormVal({ ...formVal, htmlTemplate: template });
+              }}
+            />
+            {error && <Form.Text className='text-danger'>
+              {error}
+            </Form.Text>}
+          </Col>
+          {showPreview && (
+            <Col lg={6}>
+              <Card className="h-100">
+                <Card.Header className="py-1 px-2">
+                  <small className="text-muted">Preview</small>
+                </Card.Header>
+                <Card.Body className="p-0">
+                  <iframe
+                    ref={iframeRef}
+                    style={{
+                      width: '100%',
+                      height: '300px',
+                      border: 'none',
+                      backgroundColor: 'white'
+                    }}
+                    title="Template Preview"
+                    sandbox="allow-popups allow-scripts allow-same-origin allow-forms allow-top-navigation"
+                  />
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+        </Row>
       </Form.Group>
 
       <Form.Group className="mb-2" controlId="formName">
@@ -89,7 +137,7 @@ const CreateInstance: React.FC = () => {
           !formVal.address ||
           !formVal.name ||
           !formVal.network ||
-          !formVal.abi.length
+          !formVal.htmlTemplate
         }
       >
         <FormattedMessage id="quickDapp.submit" />
