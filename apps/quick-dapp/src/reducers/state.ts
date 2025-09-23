@@ -4,6 +4,7 @@ export const appInitialState: any = {
     name: '',
     address: '',
     network: '',
+    htmlTemplate: '',
     abi: {},
     items: {},
     containers: [],

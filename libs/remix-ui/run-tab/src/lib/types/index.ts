@@ -357,7 +357,7 @@ export interface InstanceContainerProps {
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
   exEnvironment: string
-  editInstance: (instance) => void
+  editInstance: (address: string, abi: any, name: string, devdoc: any, metadata: string, htmlTemplate) => void
   plugin: RunTab
   solcVersion: { version: string, canReceive: boolean }
   getVersion: any
@@ -482,7 +482,7 @@ export interface UdappProps {
   sendValue: string,
   getFuncABIInputs: (funcABI: FuncABI) => string
   exEnvironment: string
-  editInstance: (instance) => void
+  editInstance: (address: string, abi: any, name: string, devdoc: any, metadata: string, htmlTemplate) => void
   plugin: RunTab
   solcVersion: { version: string, canReceive: boolean }
   getVersion: () => string

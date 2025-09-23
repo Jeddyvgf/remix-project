@@ -1,11 +1,14 @@
 // eslint-disable-next-line no-use-before-define
 import React, { useContext, useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import IpfsHttpClient from 'ipfs-http-client'
 import { UdappProps } from '../types'
 import { FuncABI } from '@remix-project/core-plugin'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import * as remixLib from '@remix-project/remix-lib'
 import * as ethJSUtil from '@ethereumjs/util'
+import { ModalTypes } from '@remix-ui/app'
+import { QueryParams } from '@remix-project/remix-lib'
 import { ContractGUI } from './contractGUI'
 import { TreeView, TreeViewItem } from '@remix-ui/tree-view'
 import { BN } from 'bn.js'
@@ -299,13 +302,57 @@ export function UniversalDappUI(props: UdappProps) {
             </span>
             <div></div>
             <div className="btn d-flex p-0 align-self-center">
-              {props.exEnvironment && props.exEnvironment.startsWith('injected') && (
+              {props.exEnvironment && (
                 <CustomTooltip placement="top" tooltipClasses="text-nowrap" tooltipId="udapp_udappEditTooltip" tooltipText={<FormattedMessage id="udapp.tooltipTextEdit" />}>
                   <i
                     data-id="instanceEditIcon"
                     className="fas fa-sparkles"
-                    onClick={() => {
-                      props.editInstance(props.instance)
+                    onClick={async () => {
+                      try {
+                        const data = await props.plugin.call('compilerArtefacts', 'getArtefactsByContractName', props.instance.name)
+                        const lastGenerated = await props.plugin.call('ai-dapp-generator', 'getLastGeneratedDapp', address)
+                        if (lastGenerated) {
+                          // Update the instance with the generated content
+                          props.editInstance(address, props.instance.abi, props.instance.name, data.artefact.devdoc, data.artefact.metadata, lastGenerated)
+                          return
+                        }
+                        const description: string = await new Promise((resolve, reject) => {
+                          const modalMessage = (
+                            <ul className="p-3">
+                              <div className="mb-2">
+                                <span>Please describe how you would want the design to look like.</span>
+                              </div>
+                              <div>A new tab with the new website when the generation is done. This might take up to 2 minutes.</div>
+                              <button className="btn btn-secondary btn-sm ms-2" onClick={async () => {
+                                await props.plugin.call('ai-dapp-generator', 'resetDapp', address)
+                                props.plugin.call('manager', 'deactivatePlugin', 'iframeContent')
+                              }}>Reset Dapp</button>
+                            </ul>
+                        )
+                        const modalContent = {
+                          id: 'generate-website-ai',
+                          title: 'Generate a Dapp UI with AI',
+                          message: modalMessage,
+                          placeholderText: 'E.g: "The website should have a dark theme, and show the account address and balance on top. The website should be responsive and look good on mobile. There should be a button to connect the wallet, and a button to refresh the balance, with a nice layout and design."',
+                          modalType: ModalTypes.textarea,
+                          okLabel: 'Generate',
+                          cancelLabel: 'Cancel',
+                          okFn: (value: string) => setTimeout(() => resolve(value), 0),
+                          cancelFn: () => setTimeout(() => reject(new Error('Canceled')), 0),
+                          hideFn: () => setTimeout(() => reject(new Error('Hide')), 0)
+                        }
+                        // @ts-ignore – the notification plugin's modal signature
+                        props.plugin.call('notification', 'modal', modalContent)
+                      })
+
+                      // Use the AI DApp Generator plugin
+                      await generateAIDappWithPlugin(description, address, data, props)
+                      } catch (error) {
+                        if (error.message !== 'Canceled' && error.message !== 'Hide') {
+                          console.error('Error generating DApp:', error)
+                          await props.plugin.call('terminal', 'log', { type: 'error', value: error.message })
+                        }
+                      }
                     }}
                   ></i>
                 </CustomTooltip>
@@ -425,3 +472,24 @@ export function UniversalDappUI(props: UdappProps) {
     </div>
   )
 }
+
+const generateAIDappWithPlugin = async (description: string, address: string, contractData: any, props: UdappProps) => {
+  try {
+    // Generate DApp using the plugin
+    const htmlContent = await props.plugin.call('ai-dapp-generator', 'generateDapp', {
+      description,
+      address,
+      abi: props.instance.abi || props.instance.contractData.abi,
+      chainId: props.plugin.REACT_API.chainId,
+      contractName: props.instance.name
+    })
+
+    // Update the instance with the generated content
+    props.editInstance(address, props.instance.abi, props.instance.name, contractData.artefact.devdoc, contractData.artefact.metadata, htmlContent)
+
+  } catch (error) {
+    console.error('Error generating DApp:', error)
+    await props.plugin.call('terminal', 'log', { type: 'error', value: error.message })
+  }
+}
+

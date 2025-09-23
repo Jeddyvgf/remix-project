@@ -26,6 +26,7 @@ import { RemixAIAssistant } from './app/plugins/remix-ai-assistant'
 import { SolidityUmlGen } from './app/plugins/solidity-umlgen'
 import { VyperCompilationDetailsPlugin } from './app/plugins/vyper-compilation-details'
 import { ContractFlattener } from './app/plugins/contractFlattener'
+import { IframeContent } from './app/plugins/iframe-content'
 
 import { WalkthroughService } from './walkthroughService'
 
@@ -75,6 +76,7 @@ import { Matomo } from './app/plugins/matomo'
 import { DesktopClient } from './app/plugins/desktop-client'
 import { DesktopHost } from './app/plugins/electron/desktopHostPlugin'
 import { WalletConnect } from './app/plugins/walletconnect'
+import { AIDappGenerator } from './app/plugins/ai-dapp-generator'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -310,8 +312,14 @@ class AppComponent {
     //---- matomo
     const matomo = new Matomo()
 
+    //---- AI DApp Generator
+    const aiDappGenerator = new AIDappGenerator()
+
     //---------------- Solidity UML Generator -------------------------
     const solidityumlgen = new SolidityUmlGen(appManager)
+
+    // ----------------- IframeContent Plugin -------------------------
+    const iframeContent = new IframeContent(appManager)
 
     // ----------------- Compilation Details ----------------------------
     const compilationDetails = new CompilationDetailsPlugin(appManager)
@@ -446,6 +454,7 @@ class AppComponent {
       this.walkthroughService,
       search,
       solidityumlgen,
+      iframeContent,
       compilationDetails,
       vyperCompilationDetails,
       remixGuide,
@@ -455,6 +464,7 @@ class AppComponent {
       git,
       pluginStateLogger,
       matomo,
+      aiDappGenerator,
       templateSelection,
       scriptRunnerUI,
       remixAI,
@@ -605,7 +615,8 @@ class AppComponent {
       'web3Provider',
       'offsetToLineColumnConverter',
       'pluginStateLogger',
-      'matomo'
+      'matomo',
+      'ai-dapp-generator'
     ])
 
     await this.appManager.activatePlugin(['mainPanel', 'menuicons', 'tabs'])

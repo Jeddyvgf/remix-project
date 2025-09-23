@@ -8,7 +8,7 @@ class RemixClient extends PluginClient {
     createClient(this);
   }
 
-  edit({ address, abi, network, name, devdoc, methodIdentifiers, solcVersion }: any): void {
+  edit({ address, abi, network, name, devdoc, methodIdentifiers, solcVersion, htmlTemplate }: any): void {
     initInstance({
       address,
       abi,
@@ -17,6 +17,7 @@ class RemixClient extends PluginClient {
       devdoc,
       methodIdentifiers,
       solcVersion,
+      htmlTemplate
     });
   }
 }

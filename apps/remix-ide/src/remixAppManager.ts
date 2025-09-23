@@ -450,7 +450,8 @@ class PluginLoader {
       'solidityumlgen',
       'remixGuide',
       'doc-viewer',
-      'UIScriptRunner'
+      'UIScriptRunner',
+      'iframeContent'
     ]
     this.loaders = {}
     this.loaders.localStorage = {

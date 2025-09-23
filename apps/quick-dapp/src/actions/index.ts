@@ -158,15 +158,7 @@ export const deploy = async (payload: any, callback: any) => {
     }
   }
 
-  const { data } = await axios.get(
-    // It's the json file contains all the static files paths of dapp-template.
-    // It's generated through the build process automatically.
-    `${window.origin}/plugins/remix-dapp/manifest.json`
-  );
-
-  const paths = Object.keys(data);
-
-  const { logo, ...instance } = state.instance;
+  const { logo, htmlTemplate, ...instance } = state.instance;
 
   const instanceJson = JSON.stringify({
     ...instance,
@@ -179,29 +171,35 @@ export const deploy = async (payload: any, callback: any) => {
     'dir/assets/instance.json': instanceJson,
   };
 
-  // console.log(
-  //   JSON.stringify({
-  //     ...instance,
-  //     shareTo: payload.shareTo,
-  //   })
-  // );
+  // Use the HTML template provided by the user instead of downloading dapp-template
+  if (htmlTemplate) {
+    files['dir/index.html'] = htmlTemplate;
+  } else {
+    // Fallback to the old method if no HTML template is provided
+    const { data } = await axios.get(
+      `${window.origin}/plugins/remix-dapp/manifest.json`
+    );
 
-  for (let index = 0; index < paths.length; index++) {
-    const path = paths[index];
-    // download all the static files from the dapp-template domain.
-    // here is the codebase of dapp-template: https://github.com/drafish/remix-dapp
-    const resp = await axios.get(`${window.origin}/plugins/remix-dapp/${path}`);
-    files[`dir/${path}`] = resp.data;
+    const paths = Object.keys(data);
+
+    for (let index = 0; index < paths.length; index++) {
+      const path = paths[index];
+      const resp = await axios.get(`${window.origin}/plugins/remix-dapp/${path}`);
+      files[`dir/${path}`] = resp.data;
+    }
+
+    if (files['dir/index.html']) {
+      files['dir/index.html'] = files['dir/index.html'].replace(
+        'assets/css/themes/remix-dark_tvx1s2.css',
+        themeMap[instance.theme].url
+      );
+    }
   }
 
   if (logo) {
     files['dir/assets/logo.png'] = logo
   }
   files['dir/CORS'] = '*'
-  files['dir/index.html'] = files['dir/index.html'].replace(
-    'assets/css/themes/remix-dark_tvx1s2.css',
-    themeMap[instance.theme].url
-  );
 
   try {
     await surgeClient.publish({
@@ -287,8 +285,27 @@ export const initInstance = async ({
   methodIdentifiers,
   devdoc,
   solcVersion,
+  htmlTemplate,
   ...payload
 }: any) => {
+  // If HTML template is provided, use simplified initialization
+  if (htmlTemplate) {
+    await dispatch({
+      type: 'SET_INSTANCE',
+      payload: {
+        ...payload,
+        htmlTemplate,
+        abi: {},
+        items: {},
+        containers: [],
+        natSpec: { checked: false, methods: {} },
+        solcVersion: solcVersion ? getVersion(solcVersion) : { version: '0.8.25', canReceive: true },
+      },
+    });
+    return;
+  }
+
+  // Original ABI-based initialization (kept for backward compatibility)
   const functionHashes: any = {};
   const natSpec: any = { checked: false, methods: {} };
   if (methodIdentifiers && devdoc) {
@@ -324,18 +341,20 @@ export const initInstance = async ({
 
   const abi: any = {};
   const lowLevel: any = {}
-  payload.abi.forEach((item: any) => {
-    if (item.type === 'function') {
-      item.id = encodeFunctionId(item);
-      abi[item.id] = item;
-    }
-    if (item.type === 'fallback') {
-      lowLevel.fallback = item;
-    }
-    if (item.type === 'receive') {
-      lowLevel.receive = item;
-    }
-  });
+  if (payload.abi) {
+    payload.abi.forEach((item: any) => {
+      if (item.type === 'function') {
+        item.id = encodeFunctionId(item);
+        abi[item.id] = item;
+      }
+      if (item.type === 'fallback') {
+        lowLevel.fallback = item;
+      }
+      if (item.type === 'receive') {
+        lowLevel.receive = item;
+      }
+    });
+  }
   const ids = Object.keys(abi);
   const items =
     ids.length > 2
@@ -345,8 +364,6 @@ export const initInstance = async ({
       }
       : { A: ids };
 
-  // const logo = await axios.get('https://dev.remix-dapp.pages.dev/logo.png', { responseType: 'arraybuffer' })
-
   await dispatch({
     type: 'SET_INSTANCE',
     payload: {
@@ -355,9 +372,8 @@ export const initInstance = async ({
       items,
       containers: Object.keys(items),
       natSpec,
-      solcVersion: getVersion(solcVersion),
+      solcVersion: solcVersion ? getVersion(solcVersion) : { version: '0.8.25', canReceive: true },
       ...lowLevel,
-      // logo: logo.data,
     },
   });
 };
@@ -394,6 +410,7 @@ export const emptyInstance = async () => {
       name: '',
       address: '',
       network: '',
+      htmlTemplate: '',
       abi: {},
       items: {},
       containers: [],
