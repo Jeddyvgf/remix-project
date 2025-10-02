@@ -1,7 +1,7 @@
 /**
  * Remix Tool Registry Implementation
  */
-
+import { isBigInt } from 'web3-validator';
 import EventEmitter from 'events';
 import { IMCPToolCall, IMCPToolResult } from '../../types/mcp';
 import { 
@@ -219,6 +219,19 @@ export class RemixToolRegistry extends EventEmitter implements ToolRegistry {
   }
 }
 
+const replacer = (key: string, value: any) => {
+  if (isBigInt(value)) return value.toString(); // Convert BigInt to string
+  if (typeof value === 'function') return undefined; // Remove functions
+  if (value instanceof Error) {
+    return {
+      message: value.message,
+      name: value.name,
+      stack: value.stack,
+    }; // Properly serialize Error objects
+  }
+  return value;
+};
+
 /**
  * Base class for implementing tool handlers
  */
@@ -237,11 +250,13 @@ export abstract class BaseToolHandler implements RemixToolHandler {
     return true;
   }
 
+  
+
   protected createSuccessResult(content: any): IMCPToolResult {
     return {
       content: [{
         type: 'text',
-        text: typeof content === 'string' ? content : JSON.stringify(content, null, 2)
+        text: typeof content === 'string' ? content : JSON.stringify(content, replacer, 2)
       }],
       isError: false
     };

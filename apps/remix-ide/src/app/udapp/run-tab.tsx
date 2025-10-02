@@ -56,7 +56,9 @@ const profile = {
     'resolveContractAndAddInstance',
     'showPluginDetails',
     'getRunTabAPI',
-    'getDeployedContracts'
+    'getDeployedContracts',
+    'getAllDeployedInstances',
+    'setAccount'
   ]
 }
 
@@ -149,6 +151,14 @@ export class RunTab extends ViewPlugin {
       this.emit('setEnvironmentModeReducer', env, this.currentRequest.from)
       this.transactionHistory.clear()
     }
+  }
+
+  setAccount(address: string) {
+    this.emit('setAccountReducer', address)
+  }
+
+  getAllDeployedInstances() {
+    return this.REACT_API.instances?.instanceList
   }
 
   clearAllInstances() {

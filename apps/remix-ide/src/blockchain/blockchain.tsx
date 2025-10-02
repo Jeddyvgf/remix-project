@@ -607,7 +607,7 @@ export class Blockchain extends Plugin {
   }
 
   changeExecutionContext(context, confirmCb, infoCb, cb) {
-    if (this.currentRequest && this.currentRequest.from && !this.currentRequest.from.startsWith('injected')) {
+    if (this.currentRequest && this.currentRequest.from && !this.currentRequest.from.startsWith('injected') && this.currentRequest.from !== 'remixAI') {
       // only injected provider can update the provider.
       return
     }

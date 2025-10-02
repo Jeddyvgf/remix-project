@@ -14,12 +14,12 @@ import {
   AccountInfo,
   ContractInteractionResult
 } from '../types/mcpTools';
-import { bytesToHex } from '@ethereumjs/util'
 import { Plugin } from '@remixproject/engine';
 import { getContractData } from '@remix-project/core-plugin'
 import type { TxResult } from '@remix-project/remix-lib';
 import type { TransactionReceipt } from 'web3'
-import web3 from 'web3'
+import { BrowserProvider } from "ethers"
+import web3, { Web3 } from 'web3'
 
 /**
  * Deploy Contract Tool Handler
@@ -65,7 +65,7 @@ export class DeployContractHandler extends BaseToolHandler {
         description: 'The file containing the contract to deploy'
       }
     },
-    required: ['contractName']
+    required: ['contractName', 'file']
   };
 
   getPermissions(): string[] {
@@ -116,7 +116,7 @@ export class DeployContractHandler extends BaseToolHandler {
           const compilerContracts = await plugin.call('compilerArtefacts', 'getLastCompilationResult')
           plugin.call('blockchain', 'deployContractAndLibraries', 
             data, 
-            args.constructorArgs ? args : [],
+            args.constructorArgs ? args.constructorArgs : [],
             null, 
             compilerContracts.getData().contracts, 
             callbacks, 
@@ -128,7 +128,6 @@ export class DeployContractHandler extends BaseToolHandler {
       }
       
       
-      console.log('txReturn', txReturn)
       const receipt = (txReturn.txResult.receipt as TransactionReceipt)
       const result: DeploymentResult = {
         transactionHash: web3.utils.bytesToHex(receipt.transactionHash),
@@ -216,7 +215,7 @@ export class CallContractHandler extends BaseToolHandler {
         description: 'Account to call from'
       }
     },
-    required: ['address', 'abi', 'methodName']
+    required: ['address', 'abi', 'methodName', 'contractName']
   };
 
   getPermissions(): string[] {
@@ -224,7 +223,7 @@ export class CallContractHandler extends BaseToolHandler {
   }
 
   validate(args: CallContractArgs): boolean | string {
-    const required = this.validateRequired(args, ['address', 'abi', 'methodName']);
+    const required = this.validateRequired(args, ['address', 'abi', 'methodName', 'contractName']);
     if (required !== true) return required;
 
     const types = this.validateTypes(args, {
@@ -261,7 +260,7 @@ export class CallContractHandler extends BaseToolHandler {
             args.abi,      
             funcABI,
             undefined,
-            args.args ? args : [],
+            args.args ? args.args : [],
             args.address,
             params,
             isView,
@@ -312,15 +311,6 @@ export class CallContractHandler extends BaseToolHandler {
 
     } catch (error) {
       return this.createErrorResult(`Contract call failed: ${error.message}`);
-    }
-  }
-
-  private async getAccounts(plugin: Plugin): Promise<string[]> {
-    try {
-      // TODO: Get accounts from Remix API
-      return ['0x' + Math.random().toString(16).substr(2, 40)]; // Mock account
-    } catch (error) {
-      return [];
     }
   }
 }
@@ -397,38 +387,42 @@ export class SendTransactionHandler extends BaseToolHandler {
 
   async execute(args: SendTransactionArgs, plugin: Plugin): Promise<IMCPToolResult> {
     try {
-      // Get accounts
-      const accounts = await this.getAccounts(plugin);
-      const sendAccount = args.account || accounts[0];
+      // Get accounts     
+      const sendAccount = args.account
 
       if (!sendAccount) {
         return this.createErrorResult('No account available for sending transaction');
       }
+      const web3: Web3 = await plugin.call('blockchain', 'web3')
+      const ethersProvider = new BrowserProvider(web3.currentProvider)
+      const signer = await ethersProvider.getSigner();
+      const tx = await signer.sendTransaction({
+        from: args.account,
+        to: args.to,
+        value: args.value || '0',
+        data: args.data,
+        gasLimit: args.gasLimit,
+        gasPrice: args.gasPrice
+      });
 
+      // Wait for the transaction to be mined
+      const receipt = await tx.wait()
       // TODO: Send a real transaction via Remix Run Tab API
       const mockResult = {
         success: true,
-        transactionHash: '0x' + Math.random().toString(16).substr(2, 64),
-        from: sendAccount,
+        transactionHash: receipt.hash,
+        from: args.account,
         to: args.to,
         value: args.value || '0',
-        gasUsed: args.gasLimit || 21000,
-        blockNumber: Math.floor(Math.random() * 1000000)
+        gasUsed: web3.utils.toNumber(receipt.gasUsed),
+        blockNumber: receipt.blockNumber
       };
 
       return this.createSuccessResult(mockResult);
 
     } catch (error) {
+      console.log(error)
       return this.createErrorResult(`Transaction failed: ${error.message}`);
-    }
-  }
-
-  private async getAccounts(plugin: Plugin): Promise<string[]> {
-    try {
-      // TODO: Get accounts from Remix API
-      return ['0x' + Math.random().toString(16).substr(2, 40)]; // Mock account
-    } catch (error) {
-      return [];
     }
   }
 }
@@ -455,21 +449,11 @@ export class GetDeployedContractsHandler extends BaseToolHandler {
 
   async execute(args: { network?: string }, plugin: Plugin): Promise<IMCPToolResult> {
     try {
-      // TODO: Get deployed contracts from Remix storage/state
-      const mockDeployedContracts = [
-        {
-          name: '',
-          address: '0x' ,
-          network:  '',
-          deployedAt: '',
-          transactionHash: '0x'
-        }
-      ];
-
+      const deployedContracts = await plugin.call('udapp', 'getAllDeployedInstances')
       return this.createSuccessResult({
         success: true,
-        contracts: mockDeployedContracts,
-        count: mockDeployedContracts.length
+        contracts: deployedContracts,
+        count: deployedContracts.length
       });
 
     } catch (error) {
@@ -489,7 +473,7 @@ export class SetExecutionEnvironmentHandler extends BaseToolHandler {
     properties: {
       environment: {
         type: 'string',
-        enum: ['vm-london', 'vm-berlin', 'injected', 'web3'],
+        enum: ['vm-prague', 'vm-cancun', 'vm-shanghai', 'vm-paris', 'vm-london', 'vm-berlin', 'vm-mainnet-fork', 'vm-sepolia-fork', 'vm-custom-fork', 'walletconnect', 'basic-http-provider', 'hardhat-provider', 'ganache-provider', 'foundry-provider', 'injected-Rabby Wallet', 'injected-MetaMask', 'injected-metamask-optimism', 'injected-metamask-arbitrum', 'injected-metamask-sepolia', 'injected-metamask-ephemery', 'injected-metamask-gnosis', 'injected-metamask-chiado', 'injected-metamask-linea'],
         description: 'Execution environment'
       },
       networkUrl: {
@@ -505,26 +489,23 @@ export class SetExecutionEnvironmentHandler extends BaseToolHandler {
   }
 
   validate(args: { environment: string; networkUrl?: string }): boolean | string {
-    const required = this.validateRequired(args, ['environment']);
-    if (required !== true) return required;
-
-    const validEnvironments = ['vm-london', 'vm-berlin', 'injected', 'web3'];
-    if (!validEnvironments.includes(args.environment)) {
-      return `Invalid environment. Must be one of: ${validEnvironments.join(', ')}`;
-    }
-
+    // we validate in the execute method to have access to the list of available providers.
     return true;
   }
 
-  async execute(args: { environment: string; networkUrl?: string }, plugin: Plugin): Promise<IMCPToolResult> {
+  async execute(args: { environment: string }, plugin: Plugin): Promise<IMCPToolResult> {
     try {
-      // TODO: Set execution environment via Remix Run Tab API
-      
+      const providers = await plugin.call('blockchain', 'getAllProviders')
+      console.log('available providers', Object.keys(providers))
+      const provider = Object.keys(providers).find((p) => p === args.environment)
+      if (!provider) {
+        return this.createErrorResult(`Could not find provider for environment '${args.environment}'`);
+      } 
+      await plugin.call('blockchain', 'changeExecutionContext', { context: args.environment })
       return this.createSuccessResult({
         success: true,
         message: `Execution environment set to: ${args.environment}`,
         environment: args.environment,
-        networkUrl: args.networkUrl
       });
 
     } catch (error) {
@@ -568,16 +549,14 @@ export class GetAccountBalanceHandler extends BaseToolHandler {
 
   async execute(args: { account: string }, plugin: Plugin): Promise<IMCPToolResult> {
     try {
-      // TODO: Get account balance from current provider
-      const mockBalance = (Math.random() * 10).toFixed(4);
-
+      const web3 = await plugin.call('blockchain', 'web3')
+      const balance = await web3.eth.getBalance(args.account)
       return this.createSuccessResult({
         success: true,
         account: args.account,
-        balance: mockBalance,
+        balance: web3.utils.fromWei(balance, 'ether'),
         unit: 'ETH'
-      });
-
+      })
     } catch (error) {
       return this.createErrorResult(`Failed to get account balance: ${error.message}`);
     }
@@ -712,9 +691,10 @@ export class SetSelectedAccountHandler extends BaseToolHandler {
     try {
       // Set the selected account through the udapp plugin
       await plugin.call('udapp' as any, 'setAccount', args.address);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait a moment for the change to propagate
 
       // Verify the account was set
-      const runTabApi = await plugin.call('udapp' as any, 'getAccounts');
+      const runTabApi = await plugin.call('udapp' as any, 'getRunTabAPI');
       const currentSelected = runTabApi?.accounts?.selectedAccount;
 
       if (currentSelected !== args.address) {
@@ -750,37 +730,25 @@ export class GetCurrentEnvironmentHandler extends BaseToolHandler {
   async execute(_args: any, plugin: Plugin): Promise<IMCPToolResult> {
     try {
       // Get environment information
-      const provider = await plugin.call('blockchain' as any, 'getCurrentProvider');
-      const networkName = await plugin.call('blockchain' as any, 'getNetworkName').catch(() => 'unknown');
-      const chainId = await plugin.call('blockchain' as any, 'getChainId').catch(() => 'unknown');
+      const provider = await plugin.call('blockchain' as any, 'getProvider');
+      const network = await plugin.call('network', 'detectNetwork')
 
-      // Get accounts info
-      const runTabApi = await plugin.call('udapp' as any, 'getAccounts');
-      const accountsCount = runTabApi?.accounts?.loadedAccounts
-        ? Object.keys(runTabApi.accounts.loadedAccounts).length
-        : 0;
+      // Verify the account was set
+      const runTabApi = await plugin.call('udapp' as any, 'getRunTabAPI');
+      const accounts = runTabApi?.accounts;
 
       const result = {
         success: true,
         environment: {
-          provider: {
-            name: provider?.name || 'unknown',
-            displayName: provider?.displayName || provider?.name || 'unknown',
-            kind: provider?.kind || 'unknown'
-          },
-          network: {
-            name: networkName,
-            chainId: chainId
-          },
-          accounts: {
-            total: accountsCount,
-            selected: runTabApi?.accounts?.selectedAccount || null
-          }
+          provider,
+          network,
+          accounts
         }
       };
 
       return this.createSuccessResult(result);
     } catch (error) {
+      console.error(error)
       return this.createErrorResult(`Failed to get environment information: ${error.message}`);
     }
   }

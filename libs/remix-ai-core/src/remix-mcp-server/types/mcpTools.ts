@@ -134,10 +134,7 @@ export interface SendTransactionArgs {
 }
 
 export interface DebugSessionArgs {
-  contractAddress: string;
   transactionHash?: string;
-  sourceFile?: string;
-  network?: string;
 }
 
 export interface BreakpointArgs {
@@ -273,11 +270,7 @@ export interface ContractInteractionResult {
 
 export interface DebugSessionResult {
   success: boolean;
-  sessionId: string;
-  contractAddress: string;
-  network: string;
   transactionHash?: string;
-  sourceFile?: string;
   status: string;
   createdAt: string;
 }

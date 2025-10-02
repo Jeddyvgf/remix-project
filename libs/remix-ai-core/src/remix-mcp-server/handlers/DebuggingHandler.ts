@@ -30,27 +30,20 @@ export class StartDebugSessionHandler extends BaseToolHandler {
   inputSchema = {
     type: 'object',
     properties: {
-      contractAddress: {
-        type: 'string',
-        description: 'Contract address to debug',
-        pattern: '^0x[a-fA-F0-9]{40}$'
-      },
       transactionHash: {
         type: 'string',
         description: 'Transaction hash to debug (optional)',
         pattern: '^0x[a-fA-F0-9]{64}$'
       },
-      sourceFile: {
-        type: 'string',
-        description: 'Source file path to debug'
-      },
+      /*
       network: {
         type: 'string',
         description: 'Network to debug on',
         default: 'local'
       }
+        */
     },
-    required: ['contractAddress']
+    required: ['transactionHash']
   };
 
   getPermissions(): string[] {
@@ -62,16 +55,9 @@ export class StartDebugSessionHandler extends BaseToolHandler {
     if (required !== true) return required;
 
     const types = this.validateTypes(args, {
-      contractAddress: 'string',
       transactionHash: 'string',
-      sourceFile: 'string',
-      network: 'string'
     });
     if (types !== true) return types;
-
-    if (!args.contractAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
-      return 'Invalid contract address format';
-    }
 
     if (args.transactionHash && !args.transactionHash.match(/^0x[a-fA-F0-9]{64}$/)) {
       return 'Invalid transaction hash format';
@@ -83,16 +69,11 @@ export class StartDebugSessionHandler extends BaseToolHandler {
   async execute(args: DebugSessionArgs, plugin: Plugin): Promise<IMCPToolResult> {
     try {
       // TODO: Integrate with Remix debugger plugin
-      const sessionId = 'debug_' + Date.now();
-      
+      plugin.call('debugger', 'debug', args.transactionHash);
       // Mock debug session creation
       const result: DebugSessionResult = {
         success: true,
-        sessionId,
-        contractAddress: args.contractAddress,
-        network: args.network || 'local',
         transactionHash: args.transactionHash,
-        sourceFile: args.sourceFile,
         status: 'started',
         createdAt: new Date().toISOString()
       };
