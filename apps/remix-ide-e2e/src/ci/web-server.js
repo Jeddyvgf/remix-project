@@ -38,13 +38,25 @@ app.get('/api/tests', (req, res) => {
   try {
     const list = execSync("grep -IRiL \'@disabled\': \\?true apps/remix-ide-e2e/src/tests | sort", { stdio: ['ignore', 'pipe', 'ignore'], shell: '/bin/bash' }).toString()
     const files = list.split(/\r?\n/).filter(Boolean)
-    const tests = files.map((src) => {
+    let tests = files.map((src) => {
       const base = path.basename(src).replace(/\.(js|ts)$/i, '')
       const dist = path.resolve(process.cwd(), 'dist', src).replace(/\.(ts)$/i, '.js')
       const distRel = path.relative(process.cwd(), dist)
       const hasDist = fs.existsSync(dist)
       return { base, src, dist: distRel, hasDist }
     })
+    // If a test has grouped variants like foo_group1.test, hide the plain foo.test
+    const groupedRoots = new Set()
+    for (const t of tests) {
+      const i = t.base.indexOf('_group')
+      if (i > -1 && t.base.endsWith('.test')) {
+        const root = t.base.slice(0, i) + '.test'
+        groupedRoots.add(root)
+      }
+    }
+    if (groupedRoots.size) {
+      tests = tests.filter(t => !(groupedRoots.has(t.base) && !t.base.includes('_group')))
+    }
     res.json({ tests })
   } catch (e) {
     res.status(500).json({ error: 'Failed to enumerate tests', details: e.message })
