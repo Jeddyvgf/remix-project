@@ -1,0 +1,1018 @@
+{
+  "tests": [
+    {
+      "base": "ai_panel_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/ai_panel_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/ai_panel_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "ballot_0_4_14_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/ballot_0_4_14_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/ballot_0_4_14_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "ballot_0_4_14_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/ballot_0_4_14_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/ballot_0_4_14_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "ballot_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/ballot_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/ballot_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "ballot_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/ballot_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/ballot_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "blockchain_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/blockchain_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/blockchain_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "bottom-bar",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/bottom-bar.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/bottom-bar.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "circom_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/circom_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/circom_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "circom_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/circom_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/circom_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "circom_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/circom_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/circom_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "circom_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/circom_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/circom_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "circom_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/circom_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/circom_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "circom_group6",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/circom_group6.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/circom_group6.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "code_format",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/code_format.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/code_format.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compile_run_widget_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compile_run_widget_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compile_run_widget_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compile_run_widget_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compile_run_widget_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compile_run_widget_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compile_run_widget_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compile_run_widget_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compile_run_widget_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compile_run_widget_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compile_run_widget_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compile_run_widget_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compiler_api_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compiler_api_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compiler_api_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compiler_api_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compiler_api_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compiler_api_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compiler_api_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compiler_api_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compiler_api_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compiler_api_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compiler_api_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compiler_api_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "compiler_api_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/compiler_api_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/compiler_api_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "contract_flattener",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/contract_flattener.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/contract_flattener.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "contract_verification_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/contract_verification_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/contract_verification_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "debugger_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/debugger_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/debugger_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "debugger_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/debugger_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/debugger_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "debugger_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/debugger_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/debugger_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "debugger_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/debugger_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/debugger_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "debugger_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/debugger_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/debugger_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "defaultLayout",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/defaultLayout.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/defaultLayout.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_github_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_github_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_github_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_github_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_github_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_github_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_github_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_github_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_github_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_local_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_local_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_local_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_local_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_local_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_local_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_local_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_local_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_local_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "dgit_local_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/dgit_local_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/dgit_local_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "editorHoverContext_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/editorHoverContext_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/editorHoverContext_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "editorReferences",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/editorReferences.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/editorReferences.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "editor_error_marker",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/editor_error_marker.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/editor_error_marker.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "editor_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/editor_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/editor_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "editor_line_text",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/editor_line_text.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/editor_line_text.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "eip1153_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/eip1153_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/eip1153_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "eip7702_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/eip7702_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/eip7702_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "environment-account_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/environment-account_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/environment-account_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "erc721",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/erc721.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/erc721.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "etherscan_api_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/etherscan_api_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/etherscan_api_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "expandAllFolders",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/expandAllFolders.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/expandAllFolders.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileExplorer_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileExplorer_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileExplorer_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileExplorer_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileExplorer_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileExplorer_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileExplorer_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileExplorer_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileExplorer_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileManager_api_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileManager_api_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileManager_api_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileManager_api_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileManager_api_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileManager_api_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileManager_api_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileManager_api_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileManager_api_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "fileManager_api_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/fileManager_api_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/fileManager_api_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "file_decorator",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/file_decorator.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/file_decorator.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "file_explorer_context_menu_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/file_explorer_context_menu_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/file_explorer_context_menu_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "file_explorer_dragdrop_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/file_explorer_dragdrop_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/file_explorer_dragdrop_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "file_explorer_multiselect_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/file_explorer_multiselect_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/file_explorer_multiselect_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "file_explorer_multiselect_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/file_explorer_multiselect_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/file_explorer_multiselect_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "generalSettings",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/generalSettings.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/generalSettings.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "gist_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/gist_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/gist_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "gist_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/gist_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/gist_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "gist_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/gist_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/gist_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "homeTab_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/homeTab_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/homeTab_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "importFromGithub_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/importFromGithub_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/importFromGithub_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "importFromGithub_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/importFromGithub_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/importFromGithub_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "layout",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/layout.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/layout.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "learneth_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/learneth_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/learneth_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "libraryDeployment",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/libraryDeployment.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/libraryDeployment.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "matomo_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/matomo_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/matomo_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "matomo_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/matomo_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/matomo_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "matomo_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/matomo_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/matomo_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "matomo_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/matomo_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/matomo_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "metamask",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/metamask.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/metamask.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group6",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group6.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group6.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "migrateFileSystem_group7",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/migrateFileSystem_group7.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/migrateFileSystem_group7.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "noir_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/noir_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/noir_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "pinned_contracts_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/pinned_contracts_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/pinned_contracts_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "pinned_plugin_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/pinned_plugin_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/pinned_plugin_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "pluginManager_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/pluginManager_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/pluginManager_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "providers_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/providers_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/providers_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "providers_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/providers_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/providers_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "proxy_oz_v4_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/proxy_oz_v4_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/proxy_oz_v4_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "proxy_oz_v5_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/proxy_oz_v5_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/proxy_oz_v5_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "proxy_oz_v5_non_shanghai_runtime_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/proxy_oz_v5_non_shanghai_runtime_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/proxy_oz_v5_non_shanghai_runtime_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "publishContract",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/publishContract.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/publishContract.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "quickDapp_metamask_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/quickDapp_metamask_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/quickDapp_metamask_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "recorder_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/recorder_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/recorder_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "recorder_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/recorder_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/recorder_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group6",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group6.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group6.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "remixd_group9",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/remixd_group9.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/remixd_group9.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "runAndDeploy_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/runAndDeploy_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/runAndDeploy_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "runAndDeploy_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/runAndDeploy_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/runAndDeploy_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "runAndDeploy_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/runAndDeploy_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/runAndDeploy_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "runAndDeploy_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/runAndDeploy_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/runAndDeploy_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "runAndDeploy_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/runAndDeploy_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/runAndDeploy_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "script-runner",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/script-runner.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/script-runner.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "search_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/search_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/search_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "search_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/search_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/search_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "signingMessage",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/signingMessage.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/signingMessage.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "sol2uml_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/sol2uml_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/sol2uml_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityImport_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityImport_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityImport_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityImport_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityImport_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityImport_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityImport_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityImport_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityImport_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityImport_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityImport_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityImport_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group6",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group6.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group6.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "solidityUnittests_group7",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/solidityUnittests_group7.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/solidityUnittests_group7.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "specialFunctions_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/specialFunctions_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/specialFunctions_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "specialFunctions_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/specialFunctions_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/specialFunctions_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "specialFunctions_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/specialFunctions_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/specialFunctions_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "specialFunctions_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/specialFunctions_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/specialFunctions_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "specialFunctions_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/specialFunctions_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/specialFunctions_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "specialFunctions_group6",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/specialFunctions_group6.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/specialFunctions_group6.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "staticAnalysis",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/staticAnalysis.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/staticAnalysis.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "stressEditor",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/stressEditor.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/stressEditor.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "templates_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/templates_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/templates_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "templates_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/templates_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/templates_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group10",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group10.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group10.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group11",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group11.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group11.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group6",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group6.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group6.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group7",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group7.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group7.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group8",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group8.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group8.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "terminal_group9",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/terminal_group9.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/terminal_group9.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "transactionExecution_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/transactionExecution_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/transactionExecution_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "transactionExecution_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/transactionExecution_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/transactionExecution_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "transactionExecution_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/transactionExecution_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/transactionExecution_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "transactionExecution_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/transactionExecution_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/transactionExecution_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "transactionExecution_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/transactionExecution_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/transactionExecution_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "txListener_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/txListener_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/txListener_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "url_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/url_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/url_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "url_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/url_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/url_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "url_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/url_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/url_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "url_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/url_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/url_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "usingWebWorker_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/usingWebWorker_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/usingWebWorker_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "verticalIconsPanel",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/verticalIconsPanel.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/verticalIconsPanel.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "vm_state_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/vm_state_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/vm_state_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "vyper_api_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/vyper_api_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/vyper_api_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "walkthrough",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/walkthrough.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/walkthrough.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_git_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_git_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_git_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_git_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_git_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_git_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_git_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_git_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_git_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_git_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_git_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_git_group4.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_git_group5",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_git_group5.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_git_group5.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_group1",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_group1.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_group1.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_group2",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_group2.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_group2.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_group3",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_group3.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_group3.test.js",
+      "hasDist": true
+    },
+    {
+      "base": "workspace_group4",
+      "src": "/Users/filipmertens/projects/remix-project/apps/remix-ide-e2e/src/tests/workspace_group4.test.ts",
+      "dist": "/Users/filipmertens/projects/remix-project/dist/apps/remix-ide-e2e/src/tests/workspace_group4.test.js",
+      "hasDist": true
+    }
+  ]
+}
