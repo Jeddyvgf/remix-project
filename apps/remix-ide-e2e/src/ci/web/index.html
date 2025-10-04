@@ -51,6 +51,9 @@
       /* Collapsed log state */
       body.log-collapsed { padding-bottom: 1rem; }
       body.log-collapsed #log { height: 0; padding: 0; border-top: 0; overflow: hidden; }
+  /* Floating log button (visible when log collapsed) */
+  #logFab { position: fixed; right: 12px; bottom: 12px; z-index: 1100; background: #202124; color: #fff; border: 1px solid #3c4043; border-radius: 20px; padding: .45rem .8rem; box-shadow: 0 2px 8px rgba(0,0,0,.25); cursor: pointer; display: none; }
+  #logFab:hover { background: #2b2d31; }
     </style>
   </head>
   <body>
@@ -104,7 +107,8 @@
         <div id="ciPanel"><!-- ciDetails will be moved here in split view --></div>
       </div>
     </div>
-    <div id="ciDetails" style="margin-top: 1rem"></div>
+  <div id="ciDetails" style="margin-top: 1rem"></div>
+  <button id="logFab" title="Show log">Log</button>
 
     <script>
       const $ = (s) => document.querySelector(s)
@@ -114,6 +118,7 @@
       const modeSel = $('#mode')
       const browserSel = $('#browser')
   const log = $('#log')
+  const logFab = document.getElementById('logFab')
   const actions = $('#actions')
   const layoutSel = document.getElementById('layout')
   const pinChk = document.getElementById('pinDetails')
@@ -165,9 +170,10 @@
         const j = await r.json()
         tests = j.tests || []
         render()
-        updateToggleLogText()
+  updateToggleLogText()
         applyLayout()
         restoreSplitWidth()
+  updateLogFab()
       }
 
       function persistSettings() {
@@ -326,11 +332,14 @@
         root.style.setProperty('--log-height', next + 'vh')
       }
 
-      $('#toggleLog').onclick = () => {
+      function toggleLogUI() {
         document.body.classList.toggle('log-collapsed')
         persistLogCollapsed()
         updateToggleLogText()
+        updateLogFab()
       }
+      document.getElementById('toggleLog').onclick = toggleLogUI
+      logFab.onclick = toggleLogUI
 
       function persistLogCollapsed() {
         try {
@@ -344,6 +353,11 @@
         const btn = document.getElementById('toggleLog')
         const collapsed = document.body.classList.contains('log-collapsed')
         btn.textContent = collapsed ? 'Show log' : 'Hide log'
+      }
+
+      function updateLogFab() {
+        const collapsed = document.body.classList.contains('log-collapsed')
+        logFab.style.display = collapsed ? 'inline-block' : 'none'
       }
 
       function applyLayout() {
