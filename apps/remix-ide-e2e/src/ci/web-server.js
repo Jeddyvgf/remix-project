@@ -136,7 +136,18 @@ app.get('/api/ci-status', async (req, res) => {
       workflows.map(async (wf) => {
         try {
           const jr = await axios.get(`https://circleci.com/api/v2/workflow/${wf.id}/job`, { headers })
-          jobsByWf[wf.id] = (jr.data && jr.data.items) || []
+          let items = (jr.data && jr.data.items) || []
+          // Enrich with duration and UI link when possible
+          const { org, repo } = resolveRepo()
+          const baseUrl = pipeline.number ? `https://app.circleci.com/pipelines/github/${org}/${repo}/${pipeline.number}/workflows/${wf.id}` : undefined
+          items = items.map(j => {
+            const started = j.started_at ? Date.parse(j.started_at) : null
+            const stopped = j.stopped_at ? Date.parse(j.stopped_at) : null
+            const durationSec = started && stopped ? Math.max(0, Math.round((stopped - started) / 1000)) : null
+            const ui = baseUrl && j.id ? `${baseUrl}/jobs/${j.id}` : undefined
+            return { ...j, durationSec, ui }
+          })
+          jobsByWf[wf.id] = items
         } catch (_) {
           jobsByWf[wf.id] = []
         }

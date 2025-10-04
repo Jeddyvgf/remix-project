@@ -1,5 +1,4 @@
 <!doctype html>
-<html>
   <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -70,6 +69,7 @@
       </thead>
       <tbody id="tbody"></tbody>
     </table>
+    <div id="ciDetails" style="margin-top: 1rem"></div>
     <div id="actions" class="row" style="margin-top:.5rem"></div>
   <pre id="log"></pre>
 
@@ -82,7 +82,7 @@
       const browserSel = $('#browser')
       const log = $('#log')
   const actions = $('#actions')
-      let tests = []
+  let tests = []
   let lastStatus = null
 
       async function fetchStatus() {
@@ -175,6 +175,7 @@
             if (!r.ok) throw new Error(j && j.details || 'status error')
             lastStatus = j
             renderActions()
+            renderCiDetails()
             const wfLines = (j.workflows || []).map(wf => `  - ${wf.name}  ${pad(wf.status)}  (id ${wf.id})`).join('\n')
             const counts = j.summary && j.summary.counts ? JSON.stringify(j.summary.counts) : '{}'
             const ui = j.uiUrl ? `\n  ${j.uiUrl}\n` : '\n'
@@ -190,6 +191,22 @@
         }
         log.textContent += `pipeline complete.\n`
         log.scrollTop = log.scrollHeight
+      }
+
+      function renderCiDetails() {
+        const el = document.getElementById('ciDetails')
+        if (!lastStatus) { el.innerHTML = ''; return }
+        const wfHtml = (lastStatus.workflows || []).map(wf => {
+          const jobs = (lastStatus.jobsByWf && lastStatus.jobsByWf[wf.id]) || []
+          const rows = jobs.map(j => {
+            const dur = j.durationSec != null ? `${j.durationSec}s` : ''
+            const link = j.ui ? `<a href="${j.ui}" target="_blank">open</a>` : ''
+            return `<tr><td>${j.name || j.job_number || ''}</td><td>${(j.status || 'unknown')}</td><td>${dur}</td><td>${link}</td></tr>`
+          }).join('')
+          const table = rows ? `<table style="width:100%;border-collapse:collapse;margin:.25rem 0"><thead><tr><th style="text-align:left">Job</th><th>Status</th><th>Duration</th><th></th></tr></thead><tbody>${rows}</tbody></table>` : '<div style="color:#777">No jobs</div>'
+          return `<div style="border:1px solid #eee;padding:.5rem;margin-bottom:.5rem"><div><strong>${wf.name}</strong> — ${wf.status}</div>${table}</div>`
+        }).join('')
+        el.innerHTML = `<h4>CI details</h4>${wfHtml}`
       }
 
       function renderActions() {
