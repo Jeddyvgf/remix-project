@@ -29,6 +29,18 @@ function main() {
   if (args.remote) {
     // Remote run on CircleCI; requires a pattern
     const pattern = args.pattern || promptPatternNonInteractive()
+
+    // Ensure we have a token; if not, prompt to paste one and optionally persist to .env.local
+    if (!process.env.CIRCLECI_TOKEN && !process.env.CIRCLE_TOKEN) {
+      const token = promptForToken()
+      if (!token) {
+        console.error('Aborting: no CircleCI token provided.')
+        process.exit(1)
+      }
+      process.env.CIRCLECI_TOKEN = token
+      maybePersistToken(token)
+    }
+
     const triggerPath = path.resolve(__dirname, './trigger-circleci.js')
     const forwarded = [
       '--pattern', pattern,
@@ -73,6 +85,45 @@ function promptPatternNonInteractive() {
   console.error('  yarn select_test --remote --pattern "\\.pr"')
   console.error('  yarn select_test --remote --pattern "etherscan_api.test"')
   process.exit(2)
+}
+
+function promptForToken() {
+  try {
+    const tty = require('tty')
+    const rl = require('readline').createInterface({ input: process.stdin, output: process.stdout })
+    return syncQuestion(rl, 'Paste your CircleCI Personal API Token (hidden input not supported here): ')
+  } catch (e) {
+    console.error('Failed to prompt for token:', e.message)
+    return null
+  }
+}
+
+function syncQuestion(rl, q) {
+  return new Promise((resolve) => {
+    rl.question(q, (answer) => {
+      rl.close()
+      resolve(answer && answer.trim() ? answer.trim() : null)
+    })
+  })
+}
+
+function maybePersistToken(token) {
+  const envPath = path.resolve(process.cwd(), '.env.local')
+  try {
+    const readline = require('readline-sync')
+    const ans = readline.question('Store token to .env.local as CIRCLECI_TOKEN for next time? (y/N): ')
+    if (String(ans).toLowerCase().startsWith('y')) {
+      let content = ''
+      if (fs.existsSync(envPath)) content = fs.readFileSync(envPath, 'utf8')
+      const lines = content.split(/\r?\n/)
+      const filtered = lines.filter((l) => !/^\s*CIRCLECI_TOKEN\s*=/.test(l))
+      filtered.push(`CIRCLECI_TOKEN=${token}`)
+      fs.writeFileSync(envPath, filtered.join('\n'))
+      console.log(`Saved CIRCLECI_TOKEN to ${envPath}`)
+    }
+  } catch (_) {
+    // readline-sync may not be installed; silently skip persistence
+  }
 }
 
 main()
