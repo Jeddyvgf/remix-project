@@ -7,15 +7,15 @@ import type {
 } from './types'
 
 // Client-side only - no backend needed!
-const CIRCLECI_API = 'https://circleci.com/api/v2'
+const CIRCLECI_API = '/api/circleci' // Proxy through our server to avoid CORS
 
 function getToken(): string | null {
   return localStorage.getItem('circleci_token')
 }
 
 function getHeaders(): Record<string, string> {
-  const token = getToken()
-  return token ? { 'Circle-Token': token } : {}
+  // Token handled by proxy server, but keep for future use
+  return {}
 }
 
 // Extract org/repo from current page URL or default to remix-project
@@ -39,47 +39,97 @@ export const api = {
     return res.json()
   },
 
+  // Get recent pipelines to find any currently running
+  async getRecentPipelines(): Promise<any[]> {
+    const token = getToken()
+    if (!token) return []
+
+    const { org, repo } = getOrgRepo()
+    const projectSlug = `gh/${org}/${repo}`
+
+    try {
+      const res = await fetch(`${CIRCLECI_API}/project/${projectSlug}/pipeline?branch=master`, {
+        headers: getHeaders()
+      })
+
+      if (!res.ok) return []
+
+      const data = await res.json()
+      return data.items || []
+    } catch {
+      return []
+    }
+  },
+
+  // Find the most recent running pipeline
+  async findRunningPipeline(): Promise<string | null> {
+    const pipelines = await this.getRecentPipelines()
+    
+    // Get workflows for recent pipelines to check status
+    for (const pipeline of pipelines.slice(0, 5)) { // Check last 5 pipelines
+      try {
+        const res = await fetch(`${CIRCLECI_API}/pipeline/${pipeline.id}/workflow`, {
+          headers: getHeaders()
+        })
+
+        if (!res.ok) continue
+
+        const data = await res.json()
+        const workflows = data.items || []
+        
+        // Check if any workflow is running
+        const hasRunning = workflows.some((wf: any) => 
+          ['running', 'failing', 'on_hold'].includes(wf.status?.toLowerCase())
+        )
+
+        if (hasRunning) {
+          return pipeline.id
+        }
+      } catch {
+        continue
+      }
+    }
+
+    return null
+  },
+
+
   async trigger(test: string, browser: string): Promise<TriggerResponse> {
     const token = getToken()
     if (!token) {
       throw new Error('CircleCI token not set. Click "Set token" to configure.')
     }
 
-    const { org, repo } = getOrgRepo()
-    const projectSlug = `gh/${org}/${repo}`
-
+    // Use backend proxy for trigger (CircleCI doesn't support CORS for POST)
     try {
-      const res = await fetch(`${CIRCLECI_API}/project/${projectSlug}/pipeline`, {
+      const res = await fetch('/api/trigger', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Circle-Token': token
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          branch: 'master', // or get from config
-          parameters: {
-            run_file_tests: test,
-            browser: browser
-          }
-        })
+        body: JSON.stringify({ test, browser })
       })
 
       if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.message || 'Failed to trigger pipeline')
+        const contentType = res.headers.get('content-type')
+        let errorMessage = `HTTP ${res.status}: ${res.statusText}`
+        
+        if (contentType && contentType.includes('application/json')) {
+          const error = await res.json()
+          errorMessage = error.error || error.message || errorMessage
+        } else {
+          const text = await res.text()
+          if (text) errorMessage = text
+        }
+        
+        throw new Error(errorMessage)
       }
 
-      const data = await res.json()
-      const pipelineId = data.id
-      const pipelineNumber = data.number
-      const url = `https://app.circleci.com/pipelines/${projectSlug}/${pipelineNumber}`
-
-      return {
-        ok: true,
-        url,
-        pipelineId
-      }
+      return await res.json()
     } catch (error) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw new Error('Cannot connect to proxy server. Make sure the server is running on port 5178.')
+      }
       throw error
     }
   },

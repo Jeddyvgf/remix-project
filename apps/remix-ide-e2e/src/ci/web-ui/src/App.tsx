@@ -42,11 +42,29 @@ function App() {
         ])
         setStatus(statusRes)
         setTests(testsRes.tests || [])
+
+        // Check for running pipelines if token is available
+        if (statusRes.hasToken) {
+          appendLog('Checking for running pipelines...')
+          const runningPipelineId = await api.findRunningPipeline()
+          
+          if (runningPipelineId) {
+            appendLog(`✓ Found running pipeline: ${runningPipelineId}`)
+            setCurrentPipelineId(runningPipelineId)
+            startPolling()
+            // Switch to CI tab to show the running pipeline
+            setActiveTab('ci')
+          } else {
+            appendLog('No running pipelines found.')
+          }
+        }
       } catch (error) {
         console.error('Failed to load initial data:', error)
+        appendLog(`Error loading initial data: ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
     loadInitialData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const filteredTests = tests.filter(t => 
