@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Select Test</title>
     <style>
-      body { font-family: ui-sans-serif, system-ui, sans-serif; margin: 1.5rem; }
+      /* Leave space at bottom for sticky log panel */
+      :root { --log-height: 28vh; }
+      body { font-family: ui-sans-serif, system-ui, sans-serif; margin: 1.5rem; padding-bottom: calc(var(--log-height) + 1rem); }
       header { display: flex; gap: 1rem; align-items: center; }
       .row { display: flex; gap: 0.5rem; align-items: center; }
       input[type=text]{ padding: .4rem .6rem; width: 320px; }
@@ -17,6 +19,21 @@
       .ok { color: #0a0; }
       .warn { color: #b80; }
       .err { color: #a00; }
+
+      /* Sticky log panel */
+      #log {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        height: var(--log-height);
+        margin: 0; padding: 0.75rem 1rem;
+        background: #101010; color: #e8e8e8;
+        border-top: 1px solid #333;
+        overflow: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        white-space: pre-wrap;
+        z-index: 1000;
+      }
+      #log::before { content: 'Log'; display: block; color: #9aa0a6; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: .25rem; }
     </style>
   </head>
   <body>
@@ -49,7 +66,7 @@
       </thead>
       <tbody id="tbody"></tbody>
     </table>
-    <pre id="log"></pre>
+  <pre id="log"></pre>
 
     <script>
       const $ = (s) => document.querySelector(s)
@@ -96,10 +113,14 @@
       async function trigger(name) {
         const mode = modeSel.value
         const browser = browserSel.value
-        log.textContent = `triggering ${name} (${mode})...\n`
+        // Append instead of overwrite so we keep history
+        const start = `\n> triggering ${name} (${mode})...\n`
+        log.textContent += start
+        log.scrollTop = log.scrollHeight
         const r = await fetch('/api/trigger', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ mode, test: name, browser }) })
         const j = await r.json()
-        log.textContent += JSON.stringify(j, null, 2)
+        log.textContent += JSON.stringify(j, null, 2) + "\n"
+        log.scrollTop = log.scrollHeight
         if (j.url) {
           const a = document.createElement('a')
           a.href = j.url
@@ -107,6 +128,8 @@
           a.target = '_blank'
           log.appendChild(document.createElement('br'))
           log.appendChild(a)
+          log.appendChild(document.createElement('br'))
+          log.scrollTop = log.scrollHeight
         }
       }
 
