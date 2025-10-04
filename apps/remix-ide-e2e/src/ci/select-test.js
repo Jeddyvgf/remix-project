@@ -26,6 +26,18 @@ const fs = require('fs')
 async function main() {
   const args = parseArgs(process.argv.slice(2))
 
+  // If flags are provided, respect them. Otherwise run interactive mode.
+  const isFlagDriven = args.remote || args.pattern || args.browser || args.branch || args.org || args.repo || args.vcs
+  if (!isFlagDriven) {
+    const mode = await promptList('Run where?', ['Local (this machine)', 'Remote (CircleCI)', 'Exit'])
+    if (!mode || mode.startsWith('Exit')) process.exit(0)
+    if (mode.startsWith('Local')) {
+      return runLocalInteractive()
+    } else if (mode.startsWith('Remote')) {
+      return runRemoteInteractive()
+    }
+  }
+
   if (args.remote) {
     // Remote run on CircleCI; requires a pattern
     const pattern = args.pattern || promptPatternNonInteractive()
@@ -54,13 +66,7 @@ async function main() {
   }
 
   // Local interactive run: call the existing bash script
-  const script = path.resolve(process.cwd(), 'apps/remix-ide-e2e/src/select_tests.sh')
-  if (!fs.existsSync(script)) {
-    console.error(`Cannot find local script: ${script}`)
-    process.exit(1)
-  }
-  const res = spawnSync('bash', [script], { stdio: 'inherit' })
-  process.exit(res.status || 0)
+  await runLocalInteractive()
 }
 
 function parseArgs(argv) {
@@ -124,6 +130,73 @@ function maybePersistToken(token) {
   } catch (_) {
     // readline-sync may not be installed; silently skip persistence
   }
+}
+
+async function promptList(title, options) {
+  const rl = require('readline').createInterface({ input: process.stdin, output: process.stdout })
+  console.log(title)
+  options.forEach((opt, i) => console.log(`  ${i + 1}) ${opt}`))
+  const idx = await new Promise((resolve) => rl.question('Select an option: ', (a) => { rl.close(); resolve(a) }))
+  const n = parseInt(String(idx).trim(), 10)
+  if (!n || n < 1 || n > options.length) return null
+  return options[n - 1]
+}
+
+async function runLocalInteractive() {
+  const script = path.resolve(process.cwd(), 'apps/remix-ide-e2e/src/select_tests.sh')
+  if (!fs.existsSync(script)) {
+    console.error(`Cannot find local script: ${script}`)
+    process.exit(1)
+  }
+  const res = spawnSync('bash', [script], { stdio: 'inherit' })
+  process.exit(res.status || 0)
+}
+
+async function runRemoteInteractive() {
+  // Ensure token
+  if (!process.env.CIRCLECI_TOKEN && !process.env.CIRCLE_TOKEN) {
+    const token = await promptForToken()
+    if (!token) {
+      console.error('Aborting: no CircleCI token provided.')
+      process.exit(1)
+    }
+    process.env.CIRCLECI_TOKEN = token
+    maybePersistToken(token)
+  }
+
+  // Build e2e to ensure dist tests exist (same as local flow)
+  console.log('Building e2e tests...')
+  const b = spawnSync('yarn', ['run', 'build:e2e'], { stdio: 'inherit' })
+  if (b.status !== 0) {
+    console.error('Failed to build e2e tests, cannot list tests for selection.')
+    process.exit(b.status || 1)
+  }
+
+  // Collect enabled tests from dist like the bash script does
+  const grepCmd = "grep -IRiL \'@disabled\': \\?true dist/apps/remix-ide-e2e/src/tests | sort"
+  let list = ''
+  try {
+    const { execSync } = require('child_process')
+    list = execSync(grepCmd, { stdio: ['ignore', 'pipe', 'ignore'], shell: '/bin/bash' }).toString()
+  } catch (_) {
+    console.error('Failed to enumerate tests.')
+    process.exit(1)
+  }
+  const files = list.split(/\r?\n/).filter(Boolean)
+  if (!files.length) {
+    console.error('No enabled tests found.')
+    process.exit(1)
+  }
+
+  // Present selection (with a simple list)
+  const limited = files.slice(0, 300) // avoid overlong menus
+  const choice = await promptList('Select a test to run remotely:', [...limited, 'Exit'])
+  if (!choice || choice === 'Exit') process.exit(0)
+
+  // Pass the selected file path as the pattern
+  const triggerPath = path.resolve(__dirname, './trigger-circleci.js')
+  const res = spawnSync('node', [triggerPath, '--pattern', choice], { stdio: 'inherit' })
+  process.exit(res.status || 0)
 }
 
 main()
