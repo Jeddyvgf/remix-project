@@ -8,6 +8,7 @@ export interface Test {
 export interface StatusResponse {
   hasToken: boolean
   branch: string
+  tokenSource?: string
 }
 
 export interface TestsResponse {

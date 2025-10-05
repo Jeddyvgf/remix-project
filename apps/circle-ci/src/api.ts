@@ -14,8 +14,15 @@ function getToken(): string | null {
 }
 
 function getHeaders(): Record<string, string> {
-  // Token handled by proxy server, but keep for future use
-  return {}
+  const token = getToken()
+  const headers: Record<string, string> = {}
+  
+  // Send token in custom header if available from localStorage
+  if (token) {
+    headers['x-circleci-token'] = token
+  }
+  
+  return headers
 }
 
 // Extract org/repo from current page URL or default to remix-project
@@ -33,10 +40,17 @@ export const api = {
     // Get current branch from proxy server
     if (!cachedBranch) {
       try {
-        const res = await fetch('/api/status')
+        const res = await fetch('/api/status', {
+          headers: getHeaders()
+        })
         if (res.ok) {
           const data = await res.json()
           cachedBranch = data.branch || 'master'
+          return {
+            hasToken: data.hasToken,
+            branch: data.branch,
+            tokenSource: data.tokenSource
+          }
         }
       } catch {
         cachedBranch = 'master'
@@ -50,7 +64,8 @@ export const api = {
   },
 
   async getTests(): Promise<TestsResponse> {
-    const res = await fetch('/tests.json')
+    // Add cache-busting timestamp to force reload
+    const res = await fetch(`/tests.json?t=${Date.now()}`)
     return res.json()
   },
 
@@ -311,5 +326,22 @@ export const api = {
     }
 
     return { ok: true }
+  },
+
+  async regenerateTests(): Promise<{ ok: boolean; count?: number; message?: string; error?: string }> {
+    const res = await fetch('/api/regenerate-tests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const data = await res.json()
+    
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to regenerate tests')
+    }
+
+    return data
   }
 }

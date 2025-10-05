@@ -1,19 +1,30 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
 /**
  * Generate tests.json - a static list of all available e2e tests
- * Run this before building the web UI: node generate-tests-json.js
+ * Run this before building the web UI: tsx generate-tests-json.ts
  */
 
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const projectRoot = path.resolve(__dirname, '../../')
 const testsDir = path.resolve(projectRoot, 'apps/remix-ide-e2e/src/tests')
 const outputFile = path.resolve(__dirname, 'public/tests.json')
 
-function findTests() {
-  const tests = []
+interface Test {
+  base: string
+  src: string
+  dist: string
+  hasDist: boolean
+}
+
+function findTests(): Test[] {
+  const tests: Test[] = []
   
   if (!fs.existsSync(testsDir)) {
     console.error(`Tests directory not found: ${testsDir}`)
@@ -44,7 +55,7 @@ function findTests() {
   }
 
   // Filter out non-grouped tests if a grouped version exists
-  const groupedRoots = new Set()
+  const groupedRoots = new Set<string>()
   tests.forEach(t => {
     if (t.base.includes('_group')) {
       const root = t.base.replace(/_group\d+$/, '')
@@ -74,6 +85,6 @@ try {
   console.log(`✓ Generated ${outputFile}`)
   console.log(`  Found ${tests.length} tests`)
 } catch (error) {
-  console.error('Error generating tests.json:', error.message)
+  console.error('Error generating tests.json:', (error as Error).message)
   process.exit(1)
 }

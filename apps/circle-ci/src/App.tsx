@@ -7,7 +7,7 @@ import { CIPipelineDetails } from './components/CIPipelineDetails'
 import { useSettings } from './hooks/useSettings'
 import { useFavorites } from './hooks/useFavorites'
 import { useCIStatus } from './hooks/useCIStatus'
-import type { Test, StatusResponse, Browser } from './types'
+import type { Test, StatusResponse } from './types'
 import './App.css'
 
 function App() {
@@ -18,9 +18,9 @@ function App() {
   const [status, setStatus] = useState<StatusResponse | null>(null)
   const [log, setLog] = useState<string>('Welcome to Remix E2E Test Runner!\n\nSelect a test and click "Run" to get started.\nYou can filter tests, mark favorites, and monitor CI pipelines.\n')
   const [currentPipelineId, setCurrentPipelineId] = useState<string | null>(null)
+  const [isRefreshingTests, setIsRefreshingTests] = useState(false)
 
   const filter = settings.filter || ''
-  const browser = (settings.browser || 'chrome') as Browser
   const darkMode = settings.darkMode ?? true
 
   const appendLog = useCallback((message: string) => {
@@ -69,10 +69,10 @@ function App() {
   const regularTests = filteredTests
 
   const handleRunTest = async (testName: string) => {
-    appendLog(`\n> triggering ${testName} on CircleCI...`)
+    appendLog(`\n> triggering ${testName} on CircleCI (chrome)...`)
     
     try {
-      const result = await api.trigger(testName, browser)
+      const result = await api.trigger(testName, 'chrome')
       appendLog(JSON.stringify(result, null, 2))
       
       if (result.url) {
@@ -104,8 +104,30 @@ function App() {
     }
   }
 
+  const handleRefreshTests = async () => {
+    setIsRefreshingTests(true)
+    appendLog('\n> Regenerating test list from source files...')
+    
+    try {
+      const result = await api.regenerateTests()
+      appendLog(`✓ Tests regenerated: ${result.count} tests found`)
+      
+      // Reload the tests with cache-busting
+      appendLog('> Reloading test list...')
+      const testsRes = await api.getTests()
+      const newTestCount = testsRes.tests?.length || 0
+      setTests(testsRes.tests || [])
+      appendLog(`✓ Test list reloaded - now showing ${newTestCount} tests`)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to regenerate tests'
+      appendLog(`Error: ${message}`)
+    } finally {
+      setIsRefreshingTests(false)
+    }
+  }
+
   const statusText = status
-    ? `branch: ${status.branch} · circle token: ${status.hasToken ? '✅' : '⚠️ missing'}`
+    ? `branch: ${status.branch} · token: ${status.hasToken ? '✅' : '⚠️ missing'}${status.tokenSource ? ` (${status.tokenSource})` : ''}`
     : 'Loading…'
 
   return (
@@ -120,11 +142,11 @@ function App() {
       <ControlPanel
         filter={filter}
         onFilterChange={(value) => updateSettings({ filter: value })}
-        browser={browser}
-        onBrowserChange={(b) => updateSettings({ browser: b })}
         darkMode={darkMode}
         onDarkModeChange={(d) => updateSettings({ darkMode: d })}
         onSetToken={handleSetToken}
+        onRefreshTests={handleRefreshTests}
+        isRefreshingTests={isRefreshingTests}
       />
 
       <div className="panels-container">

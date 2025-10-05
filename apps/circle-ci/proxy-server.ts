@@ -1,14 +1,20 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
 /**
  * Minimal proxy server for CircleCI API calls that don't support CORS
  * Only proxies the trigger endpoint - everything else is client-side!
  */
 
-const express = require('express')
-const path = require('path')
-const fs = require('fs')
-const { spawn } = require('child_process')
+import express, { Request, Response, NextFunction } from 'express'
+import path from 'path'
+import fs from 'fs'
+import { spawn } from 'child_process'
+import { execSync } from 'child_process'
+import { fileURLToPath } from 'url'
+import axios from 'axios'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 
@@ -16,7 +22,7 @@ const projectRoot = path.resolve(__dirname, '../../')
 
 // Load .env.local or .env if they exist (for CIRCLECI_TOKEN)
 try {
-  const dotenv = require('dotenv')
+  const dotenv = await import('dotenv')
   const envLocalPath = path.join(projectRoot, '.env.local')
   const envPath = path.join(projectRoot, '.env')
 
@@ -39,7 +45,7 @@ if (!process.env.CIRCLECI_TOKEN && !process.env.CIRCLE_TOKEN) {
 }
 
 // Simple CORS middleware (no extra package needed)
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   res.header('Access-Control-Allow-Headers', 'Content-Type')
@@ -51,13 +57,20 @@ app.use((req, res, next) => {
 
 app.use(express.json())
 
+// Serve tests.json without caching
+app.get('/tests.json', (req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+  res.setHeader('Pragma', 'no-cache')
+  res.setHeader('Expires', '0')
+  res.sendFile(path.join(__dirname, 'public/tests.json'))
+})
+
 // Serve static files from dist
 app.use(express.static(path.join(__dirname, 'dist')))
 
 // Get current git branch
-function getCurrentBranch() {
+function getCurrentBranch(): string {
   try {
-    const { execSync } = require('child_process')
     return execSync('git rev-parse --abbrev-ref HEAD', { 
       cwd: projectRoot,
       stdio: ['ignore', 'pipe', 'ignore'] 
@@ -67,23 +80,89 @@ function getCurrentBranch() {
   }
 }
 
-// Status endpoint to get current branch
-app.get('/api/status', (req, res) => {
+// Status endpoint to get current branch and token status
+app.get('/api/status', (req: Request, res: Response) => {
   const branch = getCurrentBranch()
-  const hasToken = !!(process.env.CIRCLECI_TOKEN || process.env.CIRCLE_TOKEN)
-  res.json({ branch, hasToken })
+  const serverToken = !!(process.env.CIRCLECI_TOKEN || process.env.CIRCLE_TOKEN)
+  const clientToken = req.headers['x-circleci-token']
+  const hasToken = serverToken || !!clientToken
+  
+  res.json({ 
+    branch, 
+    hasToken,
+    tokenSource: serverToken ? 'server (.env.local)' : (clientToken ? 'client (localStorage)' : 'none')
+  })
 })
 
+// Regenerate tests.json endpoint
+app.post('/api/regenerate-tests', async (req: Request, res: Response) => {
+  console.log('[Regenerate] Starting test list regeneration...')
+  
+  const generateScriptPath = path.resolve(__dirname, './generate-tests-json.ts')
+  const child = spawn('npx', ['tsx', generateScriptPath], {
+    cwd: __dirname,
+    env: process.env
+  })
+  
+  let output = ''
+  child.stdout.on('data', (d) => (output += d.toString()))
+  child.stderr.on('data', (d) => (output += d.toString()))
+  
+  child.on('close', (code) => {
+    if (code === 0) {
+      console.log('[Regenerate] Success:', output.trim())
+      // Read the newly generated tests.json
+      try {
+        const testsJsonPath = path.resolve(__dirname, 'public/tests.json')
+        const testsData = JSON.parse(fs.readFileSync(testsJsonPath, 'utf8'))
+        return res.json({ 
+          ok: true, 
+          message: 'Tests regenerated successfully',
+          count: testsData.tests?.length || 0,
+          output 
+        })
+      } catch (readError) {
+        return res.status(500).json({
+          ok: false,
+          error: 'Tests generated but failed to read tests.json',
+          output
+        })
+      }
+    } else {
+      console.error('[Regenerate] Failed:', output)
+      return res.status(500).json({ 
+        ok: false, 
+        error: 'Failed to regenerate tests', 
+        output 
+      })
+    }
+  })
+
+  child.on('error', (err) => {
+    console.error('[Regenerate] Error:', err)
+    res.status(500).json({ 
+      ok: false,
+      error: 'Failed to spawn regenerate process', 
+      details: err.message 
+    })
+  })
+})
+
+interface TriggerRequest {
+  test?: string
+  browser?: string
+}
+
 // Proxy for triggering pipelines (CORS blocked by CircleCI)
-app.post('/api/trigger', async (req, res) => {
+app.post('/api/trigger', async (req: Request<{}, {}, TriggerRequest>, res: Response) => {
   const { test, browser = 'chrome' } = req.body || {}
   if (!test) return res.status(400).json({ error: 'Missing test name' })
 
   console.log(`[Trigger] Test: ${test}, Browser: ${browser}`)
 
-  // Use the existing trigger-circleci.cjs script
-  const triggerPath = path.resolve(__dirname, './trigger-circleci.cjs')
-  const child = spawn('node', [triggerPath, '--pattern', test], {
+  // Use the existing trigger-circleci.ts script
+  const triggerPath = path.resolve(__dirname, './trigger-circleci.ts')
+  const child = spawn('npx', ['tsx', triggerPath, '--pattern', test], {
     cwd: projectRoot, // Run from project root so it can find node_modules
     env: process.env
   })
@@ -132,20 +211,24 @@ app.post('/api/trigger', async (req, res) => {
 })
 
 // Proxy for CircleCI API GET requests (also CORS-blocked)
-app.get('/api/circleci/*', async (req, res) => {
-  const token = process.env.CIRCLECI_TOKEN || process.env.CIRCLE_TOKEN
+app.get('/api/circleci/*', async (req: Request, res: Response) => {
+  // Try client token first, then server token
+  const clientToken = req.headers['x-circleci-token'] as string | undefined
+  const serverToken = process.env.CIRCLECI_TOKEN || process.env.CIRCLE_TOKEN
+  const token = clientToken || serverToken
+  
   if (!token) {
-    return res.status(401).json({ error: 'CIRCLECI_TOKEN not configured on server' })
+    return res.status(401).json({ error: 'CIRCLECI_TOKEN not configured. Set it in .env.local or via UI.' })
   }
 
   // Extract the CircleCI API path from the request
   const apiPath = req.path.replace('/api/circleci/', '')
   const url = `https://circleci.com/api/v2/${apiPath}`
   
-  console.log(`[Proxy] GET ${url}`)
+  const tokenSource = clientToken ? 'client' : 'server'
+  console.log(`[Proxy] GET ${url} (token from ${tokenSource})`)
 
   try {
-    const axios = require('axios')
     const response = await axios.get(url, {
       headers: {
         'Circle-Token': token,
@@ -154,27 +237,33 @@ app.get('/api/circleci/*', async (req, res) => {
     })
     res.json(response.data)
   } catch (error) {
-    console.error(`[Proxy] Error:`, error.message)
-    const status = error.response?.status || 500
-    const data = error.response?.data || { error: error.message }
+    console.error(`[Proxy] Error:`, (error as Error).message)
+    const status = axios.isAxiosError(error) ? (error.response?.status || 500) : 500
+    const data = axios.isAxiosError(error) 
+      ? (error.response?.data || { error: (error as Error).message })
+      : { error: (error as Error).message }
     res.status(status).json(data)
   }
 })
 
 // Proxy for CircleCI API POST requests (cancel, rerun, etc.)
-app.post('/api/circleci/*', async (req, res) => {
-  const token = process.env.CIRCLECI_TOKEN || process.env.CIRCLE_TOKEN
+app.post('/api/circleci/*', async (req: Request, res: Response) => {
+  // Try client token first, then server token
+  const clientToken = req.headers['x-circleci-token'] as string | undefined
+  const serverToken = process.env.CIRCLECI_TOKEN || process.env.CIRCLE_TOKEN
+  const token = clientToken || serverToken
+  
   if (!token) {
-    return res.status(401).json({ error: 'CIRCLECI_TOKEN not configured on server' })
+    return res.status(401).json({ error: 'CIRCLECI_TOKEN not configured. Set it in .env.local or via UI.' })
   }
 
   const apiPath = req.path.replace('/api/circleci/', '')
   const url = `https://circleci.com/api/v2/${apiPath}`
   
-  console.log(`[Proxy] POST ${url}`)
+  const tokenSource = clientToken ? 'client' : 'server'
+  console.log(`[Proxy] POST ${url} (token from ${tokenSource})`)
 
   try {
-    const axios = require('axios')
     const response = await axios.post(url, req.body, {
       headers: {
         'Circle-Token': token,
@@ -184,15 +273,17 @@ app.post('/api/circleci/*', async (req, res) => {
     })
     res.json(response.data)
   } catch (error) {
-    console.error(`[Proxy] Error:`, error.message)
-    const status = error.response?.status || 500
-    const data = error.response?.data || { error: error.message }
+    console.error(`[Proxy] Error:`, (error as Error).message)
+    const status = axios.isAxiosError(error) ? (error.response?.status || 500) : 500
+    const data = axios.isAxiosError(error)
+      ? (error.response?.data || { error: (error as Error).message })
+      : { error: (error as Error).message }
     res.status(status).json(data)
   }
 })
 
 // SPA fallback
-app.get('*', (req, res) => {
+app.get('*', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, 'dist/index.html'))
 })
 

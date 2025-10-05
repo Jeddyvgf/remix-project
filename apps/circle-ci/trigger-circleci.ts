@@ -1,16 +1,35 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 /*
   Trigger a CircleCI pipeline that runs a single e2e test pattern.
 
   Usage:
-    node apps/remix-ide-e2e/src/ci/trigger-circleci.js --pattern <grep-pattern> [--branch <branch>] [--org <org>] [--repo <repo>] [--vcs <vcs>]
+    tsx trigger-circleci.ts --pattern <grep-pattern> [--branch <branch>] [--org <org>] [--repo <repo>] [--vcs <vcs>]
 
   Env:
     CIRCLECI_TOKEN (required) – CircleCI Personal API token
 */
 
-const { execSync } = require('child_process')
-const path = require('path')
+import { execSync } from 'child_process'
+import path from 'path'
+import axios from 'axios'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+interface Args {
+  pattern?: string
+  branch?: string
+  org?: string
+  repo?: string
+  vcs?: string
+}
+
+interface RepoInfo {
+  org: string
+  repo: string
+}
 
 async function main() {
   const args = parseArgs(process.argv.slice(2))
@@ -41,7 +60,6 @@ async function main() {
   }
 
   try {
-    const axios = require('axios')
     const res = await axios.post(url, body, {
       headers: {
         'Circle-Token': token,
@@ -70,19 +88,18 @@ async function main() {
       }
     }
   } catch (err) {
-    const status = err.response && err.response.status
-    const data = err.response && err.response.data
+    const status = axios.isAxiosError(err) ? err.response?.status : undefined
+    const data = axios.isAxiosError(err) ? err.response?.data : undefined
     console.error('❌ Failed to trigger CircleCI pipeline.')
     if (status) console.error(`HTTP ${status}`)
     if (data) console.error(JSON.stringify(data, null, 2))
-    else console.error(err.message)
+    else console.error((err as Error).message)
     process.exit(1)
   }
 }
 
-function normalizePattern(p) {
+function normalizePattern(p: string): string {
   try {
-    const path = require('path')
     // If a path-like string or explicit extension is provided, reduce to base name without extension
     const hasSlash = /[\\/]/.test(p) || /^dist[\\/]/.test(p)
     const hasExt = /\.(ts|js)$/i.test(p)
@@ -90,12 +107,14 @@ function normalizePattern(p) {
       const base = path.basename(p)
       return base.replace(/\.(ts|js)$/i, '') // keep e.g. url_group1.test
     }
-  } catch (_) {}
+  } catch (_) {
+    // Ignore errors
+  }
   return p
 }
 
-function parseArgs(argv) {
-  const out = {}
+function parseArgs(argv: string[]): Args {
+  const out: Args = {}
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]
     if (a === '--pattern') out.pattern = argv[++i]
@@ -107,7 +126,7 @@ function parseArgs(argv) {
   return out
 }
 
-function getCurrentBranch() {
+function getCurrentBranch(): string {
   try {
     return execSync('git rev-parse --abbrev-ref HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
       .toString()
@@ -117,26 +136,35 @@ function getCurrentBranch() {
   }
 }
 
-function resolveRepo(args) {
+function resolveRepo(args: Args): RepoInfo {
   if (args.org && args.repo) return { org: args.org, repo: args.repo }
+  
   // Parse from git remote origin
   try {
     const remote = execSync('git config --get remote.origin.url', { stdio: ['ignore', 'pipe', 'ignore'] })
       .toString()
       .trim()
     // Support git@github.com:org/repo.git or https://github.com/org/repo.git
-    let m = remote.match(/github\.com[:/](.+?)\/(.+?)(\.git)?$/i)
+    const m = remote.match(/github\.com[:/](.+?)\/(.+?)(\.git)?$/i)
     if (m) {
       return { org: m[1], repo: m[2] }
     }
-  } catch (_) {}
+  } catch (_) {
+    // Ignore errors
+  }
+  
   // Fallback to package.json repository
   try {
-    const pkg = require(path.resolve(process.cwd(), 'package.json'))
+    const pkgPath = path.resolve(process.cwd(), 'package.json')
+    const pkgContent = fs.readFileSync(pkgPath, 'utf8')
+    const pkg = JSON.parse(pkgContent)
     const repoUrl = (pkg && pkg.repository && (pkg.repository.url || pkg.repository)) || ''
     const m = String(repoUrl).match(/github\.com[:/](.+?)\/(.+?)(\.git)?$/i)
     if (m) return { org: m[1], repo: m[2] }
-  } catch (_) {}
+  } catch (_) {
+    // Ignore errors
+  }
+  
   // Final fallback
   return { org: 'remix-project-org', repo: 'remix-project' }
 }
