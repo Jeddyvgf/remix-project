@@ -1,0 +1,41 @@
+{
+  "name": "circle-ci",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/circle-ci/src",
+  "projectType": "application",
+  "targets": {
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn install",
+        "cwd": "apps/circle-ci"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/dist"],
+      "dependsOn": ["install"],
+      "options": {
+        "command": "yarn build",
+        "cwd": "apps/circle-ci"
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "yarn serve",
+        "cwd": "apps/circle-ci"
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["install"],
+      "options": {
+        "command": "yarn dev",
+        "cwd": "apps/circle-ci"
+      }
+    }
+  },
+  "tags": ["type:app", "scope:ci"]
+}
