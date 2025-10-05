@@ -212,7 +212,6 @@
     "sol2uml": "^2.4.3",
     "solidity-comments-extractor": "^0.0.8",
     "string-similarity": "^4.0.4",
-    "svg2pdf.js": "^2.6.0",
     "text-encoding": "^0.7.0",
     "time-stamp": "^2.2.0",
     "toml": "^3.0.0",
