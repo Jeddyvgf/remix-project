@@ -4,5 +4,6 @@ import {SolHint} from './SolhintPluginClient'
 const client = new SolHint()
 
 export default function App() {
+  const nothing = useState(false)
   return <></>
 }
