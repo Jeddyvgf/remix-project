@@ -1,7 +1,7 @@
 'use strict'
 
 import tape from 'tape'
-import { BN } from 'bn.js'
+import BN from 'bn.js'
 import { toBytes } from '@ethereumjs/util'
 import { resultToRemixTx } from '../src/helpers/txResultHelper'
 
