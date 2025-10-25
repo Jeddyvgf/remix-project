@@ -15,7 +15,7 @@ sleep 5
 
 TESTFILES=$(grep -IRiL "\'@disabled\': \?true" "dist/apps/remix-ide-e2e/src/tests" | grep $1 | sort | circleci tests split )
 # Prepare slither toolchain if remixd tests are present
-printf '%s\n' "$TESTFILES" | ./apps/remix-ide/ci/setup_slither_if_needed.sh
+printf '%s\n' "$TESTFILES" | ./setup_slither_if_needed.sh
 for TESTFILE in $TESTFILES; do
     npx nightwatch --config dist/apps/remix-ide-e2e/nightwatch-chrome.js $TESTFILE --env=chrome  || TEST_EXITCODE=1
 done

@@ -188,7 +188,7 @@ jobs:
       - run: yarn nx graph --file=./projects.json
       - run:
           name: Remix Libs Linting
-          command: node ./apps/remix-ide/ci/lint-targets.js
+          command: node ./scripts/ci/lint-targets.js
 
   remix-libs:
     docker:
@@ -319,7 +319,7 @@ jobs:
               export CIRCLE_NODE_INDEX=<< parameters.shard_index >>
             fi
             E2E_RETRIES=<< pipeline.parameters.e2e_retries >> SELF_SPLIT=1 TIMINGS_JSON=timings-current.json \
-            ./apps/remix-ide/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >> << parameters.scriptparameter >>
+            ./scripts/ci/<< parameters.script >> << parameters.browser >> << parameters.jobsize >> << parameters.job >> << parameters.scriptparameter >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -376,7 +376,7 @@ jobs:
             COUNT=$(printf '%s\n' "$TEST_NAMES" | wc -l | awk '{print $1}')
             echo "Found $COUNT enabled tests. Planning for << parameters.shards >> shard(s)."
             # Run planner once to produce a manifest with all bins
-            printf '%s\n' "$TEST_NAMES" | node scripts/plan-shards.js --shards << parameters.shards >> --index 0 --timings timings-current.json --manifest-out reports/shards/manifest.json --verbose > /dev/null
+            printf '%s\n' "$TEST_NAMES" | node scripts/ci/plan-shards.js --shards << parameters.shards >> --index 0 --timings timings-current.json --manifest-out reports/shards/manifest.json --verbose > /dev/null
             # Generate overview and per-shard file lists
             node -e '
               const fs = require("fs");
@@ -452,7 +452,7 @@ jobs:
           name: Fetch failed tests from last run
           command: |
             if [ -n "${CIRCLECI_TOKEN:-}" ]; then
-              node scripts/circleci-failed-tests.js --slug gh/remix-project-org/remix-project --workflow "<< parameters.workflow_name >>" --branch "${CIRCLE_BRANCH:-}" --jobs "remix-ide-browser" --limit << parameters.history_limit >> --mode "<< parameters.selection_mode >>" --verbose > failed-basenames.txt || true
+              node scripts/ci/circleci-failed-tests.js --slug gh/remix-project-org/remix-project --workflow "<< parameters.workflow_name >>" --branch "${CIRCLE_BRANCH:-}" --jobs "remix-ide-browser" --limit << parameters.history_limit >> --mode "<< parameters.selection_mode >>" --verbose > failed-basenames.txt || true
             else
               echo "CIRCLECI_TOKEN not set; cannot fetch failed tests." > failed-basenames.txt
             fi
@@ -463,7 +463,7 @@ jobs:
             if [ ! -s failed-basenames.txt ]; then
               echo "No failing tests to rerun. Exiting."; exit 0; fi
             # Pass browser and workflow name; use pipeline parameter for retries
-            E2E_RETRIES=<< pipeline.parameters.e2e_retries >> bash ./apps/remix-ide/ci/rerun_failed.sh chrome "<< parameters.workflow_name >>"
+            E2E_RETRIES=<< pipeline.parameters.e2e_retries >> bash ./scripts/ci/rerun_failed.sh chrome "<< parameters.workflow_name >>"
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -494,21 +494,21 @@ jobs:
               echo "Checking workflow jobs to determine E2E prefix..."
               export E2E_JOB_PREFIX="remix-ide-browser,rerun-failed-e2e"
               echo "Will wait for jobs matching: $E2E_JOB_PREFIX"
-              node scripts/wait-for-e2e-jobs.js;
+              node scripts/ci/wait-for-e2e-jobs.js;
             fi
       - run:
           name: Generate HTML failed report for this workflow
           command: |
             mkdir -p reports/ci-latest-failed
             # Just check all E2E job types - let the script filter what exists
-            node scripts/generate-failed-report.js --workflow-id "$CIRCLE_WORKFLOW_ID" --jobs "remix-ide-browser,rerun-failed-e2e" --out reports/ci-latest-failed || true
+            node scripts/ci/generate-failed-report.js --workflow-id "$CIRCLE_WORKFLOW_ID" --jobs "remix-ide-browser,rerun-failed-e2e" --out reports/ci-latest-failed || true
       - store_artifacts:
           path: ./reports/ci-latest-failed
           destination: ci-latest-failed
       - run:
           name: Comment report link on PR (if failures)
           command: |
-            NODE_PATH=/tmp/pr-bot/node_modules node scripts/post-pr-report.js reports/ci-latest-failed || true
+            NODE_PATH=/tmp/pr-bot/node_modules node scripts/ci/post-pr-report.js reports/ci-latest-failed || true
 
   tests-passed:
     machine:
@@ -545,7 +545,7 @@ jobs:
           install-geckodriver: false
       - run: yarn install_webdriver
       - run: google-chrome --version
-      - run: ./apps/remix-ide/ci/browser_test_plugin.sh << parameters.plugin >>
+      - run: ./scripts/ci/browser_test_plugin.sh << parameters.plugin >>
       - store_test_results:
           path: ./reports/tests
       - store_artifacts:
@@ -598,7 +598,7 @@ jobs:
           config: "--configuration=production"
           memory: "8192"
           fallback_command: "yarn build:production"
-      - run: "./apps/remix-ide/ci/deploy_remix-<< parameters.script >>.sh"
+      - run: "./scripts/ci/deploy_remix-<< parameters.script >>.sh"
 
 workflows:
   run_file_tests:

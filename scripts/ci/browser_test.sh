@@ -29,7 +29,7 @@ if [ "$SELF_SPLIT" = "1" ]; then
   echo "==> Using self shard planner (shards=$PARALLEL_TOTAL index=$PARALLEL_INDEX)"
   echo "ENV: CIRCLE_BRANCH=${CIRCLE_BRANCH:-local} CIRCLE_NODE_TOTAL=$PARALLEL_TOTAL CIRCLE_NODE_INDEX=$PARALLEL_INDEX E2E_RETRIES=$E2E_RETRIES"
   mkdir -p reports/shards
-  TESTFILES=$(printf '%s\n' "$BASE_FILES" | node scripts/plan-shards.js --shards "$PARALLEL_TOTAL" --index "$PARALLEL_INDEX" --timings "$TIMINGS_JSON" --verbose --manifest-out reports/shards/manifest-$PARALLEL_INDEX.json)
+  TESTFILES=$(printf '%s\n' "$BASE_FILES" | node scripts/ci/plan-shards.js --shards "$PARALLEL_TOTAL" --index "$PARALLEL_INDEX" --timings "$TIMINGS_JSON" --verbose --manifest-out reports/shards/manifest-$PARALLEL_INDEX.json)
 else
   echo "==> Using CircleCI timings split"
   mkdir -p reports/shards
@@ -47,7 +47,7 @@ echo "==> Full list (for grepability):"
 printf '%s\n' "$TESTFILES"
 
 # If this batch includes remixd (slither) tests, prepare pip3/slither toolchain on-demand
-printf '%s\n' "$TESTFILES" | ./apps/remix-ide/ci/setup_slither_if_needed.sh
+printf '%s\n' "$TESTFILES" | ./setup_slither_if_needed.sh
 for TESTFILE in $TESTFILES; do
     echo "Running test: ${TESTFILE}.js (retries on fail: $E2E_RETRIES)"
     attempt=0

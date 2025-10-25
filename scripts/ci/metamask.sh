@@ -25,7 +25,7 @@ yarn run serve:production &
 sleep 5
 
 # Prepare slither toolchain if remixd tests are present (unlikely in metamask-only run)
-printf '%s\n' "$TESTFILES" | ./apps/remix-ide/ci/setup_slither_if_needed.sh
+printf '%s\n' "$TESTFILES" | ./setup_slither_if_needed.sh
 
 for TESTFILE in $TESTFILES; do
     echo "Running metamask test: $TESTFILE"

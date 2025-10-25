@@ -5,7 +5,7 @@ SHA=`git rev-parse --short --verify HEAD`
 
 # this gh action is used to deploy the build to the gh pages
 mkdir -p dist/apps/remix-ide/.github/workflows
-cp apps/remix-ide/ci/gh-actions-deploy.yml dist/apps/remix-ide/.github/workflows
+cp scripts/ci/gh-actions-deploy.yml dist/apps/remix-ide/.github/workflows
 
 cd dist/apps/remix-ide
 
