@@ -49,6 +49,11 @@ parameters:
     type: boolean
     default: false
 
+  # Timings fetch window (fewer = faster API calls)
+  timings_limit:
+    type: integer
+    default: 10
+
   # Rerun-failed configuration
   rerun_failed_history:
     type: integer
@@ -159,10 +164,10 @@ jobs:
           command: |
             if [ -n "${CIRCLECI_TOKEN:-}" ]; then
               echo "Fetching timings for branch ${CIRCLE_BRANCH:-all}..."
-              yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch "${CIRCLE_BRANCH:-}" --limit 30 --json timings-current.json || true
+              yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch "${CIRCLE_BRANCH:-}" --limit << pipeline.parameters.timings_limit >> --json timings-current.json || true
               if [ ! -s timings-current.json ] || [ "$(jq -r '.files | length' timings-current.json 2>/dev/null || echo 0)" -eq 0 ]; then
                 echo "No timings for current branch; falling back to master"
-                yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch master --limit 30 --json timings-current.json || true
+                yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch master --limit << pipeline.parameters.timings_limit >> --json timings-current.json || true
               fi
             else
               echo "CIRCLECI_TOKEN not set; shard planning will use median defaults."
@@ -357,12 +362,12 @@ jobs:
                 command: |
                   if [ -n "${CIRCLECI_TOKEN:-}" ]; then
                     echo "Fetching timings for branch ${CIRCLE_BRANCH:-all}..."
-                    yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch "${CIRCLE_BRANCH:-}" --limit 30 --json timings-current.json || true
+                    yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch "${CIRCLE_BRANCH:-}" --limit << pipeline.parameters.timings_limit >> --json timings-current.json || true
                     
                     # If no timings found for this branch (new branch), fall back to master
                     if [ ! -s timings-current.json ] || [ "$(jq -r '.files | length' timings-current.json 2>/dev/null || echo 0)" -eq 0 ]; then
                       echo "⚠️  No timings found for branch ${CIRCLE_BRANCH:-current}, falling back to master..."
-                      yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch master --limit 30 --json timings-current.json || true
+                      yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch master --limit << pipeline.parameters.timings_limit >> --json timings-current.json || true
                     fi
                   else
                     echo "CIRCLECI_TOKEN not set; skipping timings fetch. Self-split will fall back to median weights."
@@ -409,12 +414,12 @@ jobs:
           command: |
             if [ -n "${CIRCLECI_TOKEN:-}" ]; then
               echo "Fetching timings for branch ${CIRCLE_BRANCH:-all}..."
-              yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch "${CIRCLE_BRANCH:-}" --limit 30 --json timings-current.json || true
+              yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch "${CIRCLE_BRANCH:-}" --limit << pipeline.parameters.timings_limit >> --json timings-current.json || true
               
               # If no timings found for this branch (new branch), fall back to master
               if [ ! -s timings-current.json ] || [ "$(jq -r '.files | length' timings-current.json 2>/dev/null || echo 0)" -eq 0 ]; then
                 echo "⚠️  No timings found for branch ${CIRCLE_BRANCH:-current}, falling back to master..."
-                yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch master --limit 30 --json timings-current.json || true
+                yarn ci:timings --slug gh/remix-project-org/remix-project --workflow web --branch master --limit << pipeline.parameters.timings_limit >> --json timings-current.json || true
               fi
             else
               echo "CIRCLECI_TOKEN not set; planning will use median default weights."
@@ -776,6 +781,7 @@ workflows:
               scriptparameter: [""]
               shard_index: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
               vertical_mode: [true]
+              skip_timings: [true]
       - tests-passed:
           requires:
             - lint
