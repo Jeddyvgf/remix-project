@@ -1,10 +1,11 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import React from 'react' // eslint-disable-line
+import React, { createElement } from 'react' // eslint-disable-line
+import { createPortal } from 'react-dom'
 import { RunTabUI } from '@remix-ui/run-tab'
 import { trackMatomoEvent } from '@remix-api'
 import { ViewPlugin } from '@remixproject/engine-web'
 import isElectron from 'is-electron'
-import { addressToString } from '@remix-ui/helper'
+import { addressToString, PluginViewWrapper } from '@remix-ui/helper'
 import { InjectedProviderDefault } from '../providers/injected-provider-default'
 import { InjectedCustomProvider } from '../providers/injected-custom-provider'
 import * as packageJson from '../../../../../package.json'
@@ -15,6 +16,7 @@ import type { CompilerArtefacts } from '@remix-project/core-plugin'
 import { ForkedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
 import { EnvDropdownLabelStateType } from 'libs/remix-ui/run-tab/src/lib/types'
+import { App } from 'octokit'
 
 export const providerLogos = {
   'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
@@ -78,6 +80,8 @@ export class RunTab extends ViewPlugin {
   el: any
   allTransactionHistory: Map<string, any> = new Map()
 
+  private dispatch: (state: any) => void = () => {}
+  private envUI: React.ReactNode = null
   constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
     this.event = new EventManager()
@@ -94,6 +98,15 @@ export class RunTab extends ViewPlugin {
     this.REACT_API = {}
     this.setupEvents()
     this.el = document.createElement('div')
+  }
+
+  onActivation(): void {
+    this.on('manager', 'activate', async (profile: { name: string }) => {
+      if (profile.name === 'udappEnv') {
+        this.envUI = await this.call('udappEnv', 'getUI', this.engine, this.blockchain)
+        this.renderComponent()
+      }
+    })
   }
 
   setupEvents() {
@@ -230,21 +243,41 @@ export class RunTab extends ViewPlugin {
     return this.blockchain.pendingTransactionsCount()
   }
 
+  setDispatch(dispatch: (state: any) => void) {
+    this.dispatch = dispatch
+    this.renderComponent()
+  }
+
+  renderComponent() {
+    this.dispatch && this.dispatch({
+      ...this,
+      envUI: this.envUI
+    })
+  }
+
+  updateComponent(state: any) {
+    return (<>
+      <RunTabUI plugin={state} />
+      { this.envUI && createPortal(this.envUI, document.getElementById('udappEnvComponent')) }
+    </>)
+  }
+
   render() {
     return (
       <div>
-        <RunTabUI plugin={this} />
+        <div id="udappEnvComponent"></div>
+        <PluginViewWrapper plugin={this} />
       </div>
     )
   }
 
-  onReady(api) {
-    this.REACT_API = api
-  }
+  // async onReady(api) {
+  //   console.log('onReady', api)
+  //   this.REACT_API = api
+  // }
 
   async onInitDone() {
     const udapp = this // eslint-disable-line
-
     const descriptions = {
       'vm-cancun': 'Deploy to the in-browser virtual machine running the Cancun fork.',
       'vm-shanghai': 'Deploy to the in-browser virtual machine running the Shanghai fork.',

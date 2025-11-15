@@ -74,6 +74,7 @@ import { DesktopClient } from './app/plugins/desktop-client'
 import { DesktopHost } from './app/plugins/electron/desktopHostPlugin'
 import { WalletConnect } from './app/plugins/walletconnect'
 import { AIDappGenerator } from './app/plugins/ai-dapp-generator'
+import { EnvironmentPlugin } from './app/udapp/udappEnv'
 
 import { TemplatesSelectionPlugin } from './app/plugins/templates-selection/templates-selection-plugin'
 
@@ -410,6 +411,8 @@ class AppComponent {
 
     const walletConnect = new WalletConnect()
 
+    const udappEnvPlugin = new EnvironmentPlugin()
+
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -467,7 +470,8 @@ class AppComponent {
       scriptRunnerUI,
       remixAI,
       remixAiAssistant,
-      walletConnect
+      walletConnect,
+      udappEnvPlugin
     ])
 
     //---- fs plugin
@@ -750,6 +754,7 @@ class AppComponent {
     if (isElectron()){
       this.appManager.activatePlugin(['desktopHost'])
     }
+    this.appManager.activatePlugin(['udappEnv'])
   }
 }
 

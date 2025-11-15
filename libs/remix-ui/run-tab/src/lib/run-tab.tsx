@@ -66,73 +66,73 @@ export type CheckStatus = 'Passed' | 'Failed' | 'Not Found'
 
 export function RunTabUI(props: RunTabProps) {
   const { plugin } = props
-  const [focusModal, setFocusModal] = useState<Modal>({
-    hide: true,
-    title: '',
-    message: '',
-    okLabel: '',
-    okFn: () => {},
-    cancelLabel: '',
-    cancelFn: () => {}
-  })
-  const [modals, setModals] = useState<Modal[]>([])
-  const [focusToaster, setFocusToaster] = useState<string>('')
-  const [toasters, setToasters] = useState<string[]>([])
-  const [publishData, setPublishData] = useState<{
-    storage: 'ipfs' | 'swarm'
-    contract: ContractData
-  }>({
-    storage: null,
-    contract: null
-  })
-  const initialState = props.initialState || runTabInitialState
+  // const [focusModal, setFocusModal] = useState<Modal>({
+  //   hide: true,
+  //   title: '',
+  //   message: '',
+  //   okLabel: '',
+  //   okFn: () => {},
+  //   cancelLabel: '',
+  //   cancelFn: () => {}
+  // })
+  // const [modals, setModals] = useState<Modal[]>([])
+  // const [focusToaster, setFocusToaster] = useState<string>('')
+  // const [toasters, setToasters] = useState<string[]>([])
+  // const [publishData, setPublishData] = useState<{
+  //   storage: 'ipfs' | 'swarm'
+  //   contract: ContractData
+  // }>({
+  //   storage: null,
+  //   contract: null
+  // })
+  // const initialState = props.initialState || runTabInitialState
 
-  initialState.selectExEnv = plugin.blockchain.getProvider()
-  const [runTab, dispatch] = useReducer(runTabReducer, initialState)
-  const REACT_API = { runTab }
-  const currentfile = plugin.config.get('currentFile')
-  const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
-  const [evmCheckComplete, setEvmCheckComplete] = useState(false)
+  // initialState.selectExEnv = plugin.blockchain.getProvider()
+  // const [runTab, dispatch] = useReducer(runTabReducer, initialState)
+  // const REACT_API = { runTab }
+  // const currentfile = plugin.config.get('currentFile')
+  // const [solcVersion, setSolcVersion] = useState<{version: string, canReceive: boolean}>({ version: '', canReceive: true })
+  // const [evmCheckComplete, setEvmCheckComplete] = useState(false)
 
-  const getVersion = () => {
-    let version = '0.8.25'
-    try {
-      const regVersion = window.location.href.match(/soljson-v(.*)\+commit/g)
-      if (regVersion && regVersion[1]) version = regVersion[1]
-      if (semver.lt(version, '0.6.0')) {
-        setSolcVersion({ version: version, canReceive: false })
-      } else {
-        setSolcVersion({ version: version, canReceive: true })
-      }
-    } catch (e) {
-      setSolcVersion({ version, canReceive: true })
-    }
-  }
+  // const getVersion = () => {
+  //   let version = '0.8.25'
+  //   try {
+  //     const regVersion = window.location.href.match(/soljson-v(.*)\+commit/g)
+  //     if (regVersion && regVersion[1]) version = regVersion[1]
+  //     if (semver.lt(version, '0.6.0')) {
+  //       setSolcVersion({ version: version, canReceive: false })
+  //     } else {
+  //       setSolcVersion({ version: version, canReceive: true })
+  //     }
+  //   } catch (e) {
+  //     setSolcVersion({ version, canReceive: true })
+  //   }
+  // }
 
-  const getCompilerDetails = async () => await checkEvmChainCompatibility()
+  // const getCompilerDetails = async () => await checkEvmChainCompatibility()
 
-  const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
-    const result = getCompatibleChain(evmVersion ?? 'paris', targetChainId) // using paris evm as a default fallback version
-    return result
-  }
+  // const returnCompatibleChain = async (evmVersion: HardFork, targetChainId: number) => {
+  //   const result = getCompatibleChain(evmVersion ?? 'paris', targetChainId) // using paris evm as a default fallback version
+  //   return result
+  // }
 
-  const checkEvmChainCompatibilityOkFunction = async (fetchDetails: ChainCompatibleInfo) => {
-    const compilerParams = {
-      evmVersion: fetchDetails.evmVersion,
-      optimize: false,
-      language: 'Solidity',
-      runs: '200',
-      version: fetchDetails.minCompilerVersion
-    }
-    await plugin.call('solidity', 'setCompilerConfig', compilerParams)
-    const currentFile = await plugin.call('fileManager', 'getCurrentFile')
-    await plugin.call('solidity', 'compile', currentFile)
-    setEvmCheckComplete(true)
-  }
+  // const checkEvmChainCompatibilityOkFunction = async (fetchDetails: ChainCompatibleInfo) => {
+  //   const compilerParams = {
+  //     evmVersion: fetchDetails.evmVersion,
+  //     optimize: false,
+  //     language: 'Solidity',
+  //     runs: '200',
+  //     version: fetchDetails.minCompilerVersion
+  //   }
+  //   await plugin.call('solidity', 'setCompilerConfig', compilerParams)
+  //   const currentFile = await plugin.call('fileManager', 'getCurrentFile')
+  //   await plugin.call('solidity', 'compile', currentFile)
+  //   setEvmCheckComplete(true)
+  // }
 
-  const checkEvmChainCompatibility = async () => {
-    const fetchDetails = await plugin.call('solidity', 'getCompilerQueryParameters')
-    const compilerState = await plugin.call('solidity', 'getCompilerState')
+  // const checkEvmChainCompatibility = async () => {
+  //   const fetchDetails = await plugin.call('solidity', 'getCompilerQueryParameters')
+  //   const compilerState = await plugin.call('solidity', 'getCompilerState')
 
     // if no contract file is open, don't do anything
     if (compilerState.target !== null) {
@@ -170,267 +170,192 @@ export function RunTabUI(props: RunTabProps) {
     }
   }
 
-  useEffect(() => {
-    if (!props.initialState) {
-      initRunTab(plugin, true)(dispatch)
-      plugin.onInitDone()
-    } else {
-      initRunTab(plugin, false)(dispatch)
-    }
-  }, [plugin])
+  // useEffect(() => {
+  //   if (!props.initialState) {
+  //     initRunTab(plugin, true)(dispatch)
+  //     plugin.onInitDone()
+  //   } else {
+  //     initRunTab(plugin, false)(dispatch)
+  //   }
+  // }, [plugin])
 
-  useEffect(() => {
-    plugin.onReady(runTab)
-    plugin.call('pluginStateLogger', 'logPluginState', 'udapp', runTab)
-  }, [REACT_API])
+  // useEffect(() => {
+  //   plugin.onReady(runTab)
+  //   plugin.call('pluginStateLogger', 'logPluginState', 'udapp', runTab)
+  // }, [REACT_API])
 
-  useEffect(() => {
-    if (modals.length > 0) {
-      setFocusModal(() => {
-        const focusModal = {
-          hide: false,
-          title: modals[0].title,
-          message: modals[0].message,
-          okLabel: modals[0].okLabel,
-          okFn: modals[0].okFn,
-          cancelLabel: modals[0].cancelLabel,
-          cancelFn: modals[0].cancelFn,
-          okBtnClass: modals[0].okBtnClass,
-          cancelBtnClass: modals[0].cancelBtnClass
-        }
-        return focusModal
-      })
-      const modalList = modals.slice()
+  // useEffect(() => {
+  //   if (modals.length > 0) {
+  //     setFocusModal(() => {
+  //       const focusModal = {
+  //         hide: false,
+  //         title: modals[0].title,
+  //         message: modals[0].message,
+  //         okLabel: modals[0].okLabel,
+  //         okFn: modals[0].okFn,
+  //         cancelLabel: modals[0].cancelLabel,
+  //         cancelFn: modals[0].cancelFn,
+  //         okBtnClass: modals[0].okBtnClass,
+  //         cancelBtnClass: modals[0].cancelBtnClass
+  //       }
+  //       return focusModal
+  //     })
+  //     const modalList = modals.slice()
 
-      modalList.shift()
-      setModals(modalList)
-    }
-  }, [modals])
+  //     modalList.shift()
+  //     setModals(modalList)
+  //   }
+  // }, [modals])
 
-  useEffect(() => {
-    if (runTab.notification.title) {
-      modal(
-        runTab.notification.title,
-        runTab.notification.message,
-        runTab.notification.labelOk,
-        runTab.notification.actionOk,
-        runTab.notification.labelCancel,
-        runTab.notification.actionCancel
-      )
-    }
-  }, [runTab.notification])
+  // useEffect(() => {
+  //   if (runTab.notification.title) {
+  //     modal(
+  //       runTab.notification.title,
+  //       runTab.notification.message,
+  //       runTab.notification.labelOk,
+  //       runTab.notification.actionOk,
+  //       runTab.notification.labelCancel,
+  //       runTab.notification.actionCancel
+  //     )
+  //   }
+  // }, [runTab.notification])
 
-  useEffect(() => {
-    if (toasters.length > 0) {
-      setFocusToaster(() => {
-        return toasters[0]
-      })
-      const toasterList = toasters.slice()
+  // useEffect(() => {
+  //   if (toasters.length > 0) {
+  //     setFocusToaster(() => {
+  //       return toasters[0]
+  //     })
+  //     const toasterList = toasters.slice()
 
-      toasterList.shift()
-      setToasters(toasterList)
-    }
-  }, [toasters])
+  //     toasterList.shift()
+  //     setToasters(toasterList)
+  //   }
+  // }, [toasters])
 
-  useEffect(() => {
-    if (runTab.popup) {
-      toast(runTab.popup)
-    }
-  }, [runTab.popup])
+  // useEffect(() => {
+  //   if (runTab.popup) {
+  //     toast(runTab.popup)
+  //   }
+  // }, [runTab.popup])
 
-  useEffect(() => {
-    if (runTab.selectExEnv.includes('injected') &&
-      Object.entries(runTab.accounts.loadedAccounts).length === 0 &&
-    runTab.accounts.selectedAccount.length > 0) {
-      // switch to vm-cancum because no account is loaded from injected provider
-      const context = plugin.blockchain.defaultPinnedProviders[0] // vm-cancun
-      setExecutionEnvironment({ context, fork: '' })
-    }
-  }, [runTab.accounts.loadedAccounts])
+  // useEffect(() => {
+  //   if (runTab.selectExEnv.includes('injected') &&
+  //     Object.entries(runTab.accounts.loadedAccounts).length === 0 &&
+  //   runTab.accounts.selectedAccount.length > 0) {
+  //     // switch to vm-cancum because no account is loaded from injected provider
+  //     const context = plugin.blockchain.defaultPinnedProviders[0] // vm-cancun
+  //     setExecutionEnvironment({ context, fork: '' })
+  //   }
+  // }, [runTab.accounts.loadedAccounts])
 
-  const setCheckIpfs = (value: boolean) => {
-    dispatch(setIpfsCheckedState(value))
-  }
+  // const setCheckIpfs = (value: boolean) => {
+  //   dispatch(setIpfsCheckedState(value))
+  // }
 
-  const modal = (
-    title: string,
-    message: string | JSX.Element,
-    okLabel: string,
-    okFn: () => void,
-    cancelLabel?: string,
-    cancelFn?: () => void,
-    okBtnClass?: string,
-    cancelBtnClass?: string
-  ) => {
-    setModals((modals) => {
-      modals.push({
-        message,
-        title,
-        okLabel,
-        okFn,
-        cancelLabel,
-        cancelFn,
-        okBtnClass,
-        cancelBtnClass
-      })
-      return [...modals]
-    })
-  }
+  // const modal = (
+  //   title: string,
+  //   message: string | JSX.Element,
+  //   okLabel: string,
+  //   okFn: () => void,
+  //   cancelLabel?: string,
+  //   cancelFn?: () => void,
+  //   okBtnClass?: string,
+  //   cancelBtnClass?: string
+  // ) => {
+  //   setModals((modals) => {
+  //     modals.push({
+  //       message,
+  //       title,
+  //       okLabel,
+  //       okFn,
+  //       cancelLabel,
+  //       cancelFn,
+  //       okBtnClass,
+  //       cancelBtnClass
+  //     })
+  //     return [...modals]
+  //   })
+  // }
 
-  const handleHideModal = () => {
-    setFocusModal((modal) => {
-      return { ...modal, hide: true, message: null }
-    })
-  }
+  // const handleHideModal = () => {
+  //   setFocusModal((modal) => {
+  //     return { ...modal, hide: true, message: null }
+  //   })
+  // }
 
-  const handleToaster = () => {
-    setFocusToaster('')
-    hideToaster()
-  }
+  // const handleToaster = () => {
+  //   setFocusToaster('')
+  //   hideToaster()
+  // }
 
-  const toast = (toasterMsg: string) => {
-    setToasters((messages) => {
-      messages.push(toasterMsg)
-      return [...messages]
-    })
-  }
+  // const toast = (toasterMsg: string) => {
+  //   setToasters((messages) => {
+  //     messages.push(toasterMsg)
+  //     return [...messages]
+  //   })
+  // }
 
-  const resetStorage = () => {
-    setPublishData({
-      storage: null,
-      contract: null
-    })
-  }
+  // const resetStorage = () => {
+  //   setPublishData({
+  //     storage: null,
+  //     contract: null
+  //   })
+  // }
 
-  const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
-    setPublishData({
-      storage,
-      contract
-    })
-  }
+  // const publishToStorage = (storage: 'ipfs' | 'swarm', contract: ContractData) => {
+  //   setPublishData({
+  //     storage,
+  //     contract
+  //   })
+  // }
 
-  const gasEstimationPrompt = (msg: string) => {
-    return (
-      <div>
-        <FormattedMessage id="udapp.gasEstimationPromptText" /> <br />
-        {msg}
-      </div>
-    )
-  }
+  // const gasEstimationPrompt = (msg: string) => {
+  //   return (
+  //     <div>
+  //       <FormattedMessage id="udapp.gasEstimationPromptText" /> <br />
+  //       {msg}
+  //     </div>
+  //   )
+  // }
 
-  const passphrasePrompt = (message: string) => {
-    return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
-  }
+  // const passphrasePrompt = (message: string) => {
+  //   return <PassphrasePrompt message={message} setPassphrase={setPassphraseModal} defaultValue={runTab.passphrase} />
+  // }
 
-  const scenarioPrompt = (message: string, defaultValue) => {
-    return <ScenarioPrompt message={message} setScenarioPath={setScenarioPath} defaultValue={defaultValue} />
-  }
+  // const scenarioPrompt = (message: string, defaultValue) => {
+  //   return <ScenarioPrompt message={message} setScenarioPath={setScenarioPath} defaultValue={defaultValue} />
+  // }
 
-  const mainnetPrompt = (
-    tx: Tx,
-    network: Network,
-    amount: string,
-    gasEstimation: string,
-    gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
-    determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
-  ) => {
-    return (
-      <MainnetPrompt
-        init={determineGasPrice}
-        network={network}
-        tx={tx}
-        amount={amount}
-        gasEstimation={gasEstimation}
-        setNewGasPrice={gasFees}
-        updateBaseFeePerGas={setBaseFeePerGas}
-        updateConfirmSettings={setConfirmSettings}
-        updateGasPrice={setGasPrice}
-        updateGasPriceStatus={setGasPriceStatus}
-        updateMaxFee={setMaxFee}
-        updateMaxPriorityFee={setMaxPriorityFee}
-        maxFee={runTab.maxFee}
-        maxPriorityFee={runTab.maxPriorityFee}
-      />
-    )
-  }
-
-  const environmentUI = (
-    <Dropdown onClick={(e) => {
-      e.preventDefault()
-      e.stopPropagation()
-    }}>
-      <Dropdown.Toggle as={CustomToggle} className="btn btn-secondary w-100 d-inline-block pe-0" icon="fas fa-caret-down text-secondary ms-2" useDefaultIcon={false}>
-        <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
-          <div className="text-truncate text-secondary">
-            {<span data-id="selectedVersion">Cancun</span>}
-          </div>
-        </div>
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light">
-      </Dropdown.Menu>
-    </Dropdown>
-  )
+  // const mainnetPrompt = (
+  //   tx: Tx,
+  //   network: Network,
+  //   amount: string,
+  //   gasEstimation: string,
+  //   gasFees: (maxFee: string, cb: (txFeeText: string, priceStatus: boolean) => void) => void,
+  //   determineGasPrice: (cb: (txFeeText: string, gasPriceValue: string, gasPriceStatus: boolean) => void) => void
+  // ) => {
+  //   return (
+  //     <MainnetPrompt
+  //       init={determineGasPrice}
+  //       network={network}
+  //       tx={tx}
+  //       amount={amount}
+  //       gasEstimation={gasEstimation}
+  //       setNewGasPrice={gasFees}
+  //       updateBaseFeePerGas={setBaseFeePerGas}
+  //       updateConfirmSettings={setConfirmSettings}
+  //       updateGasPrice={setGasPrice}
+  //       updateGasPriceStatus={setGasPriceStatus}
+  //       updateMaxFee={setMaxFee}
+  //       updateMaxPriorityFee={setMaxPriorityFee}
+  //       maxFee={runTab.maxFee}
+  //       maxPriorityFee={runTab.maxPriorityFee}
+  //     />
+  //   )
+  // }
 
   return (
     <Fragment>
-      <div className='card ms-2 bg-light'>
-        <div className="d-flex align-items-center justify-content-between p-3">
-          <div className="d-flex align-items-center">
-            <h6 className="my-auto" style={{ color: 'white' }}>Environment</h6>
-          </div>
-          <div className="toggle-container">
-            <button className='btn btn-primary btn-sm small me-2' style={{ fontSize: '0.7rem' }}>
-              <i className='fas fa-code-branch'></i> Fork
-            </button>
-            <button className='btn btn-outline-danger btn-sm small' style={{ fontSize: '0.7rem' }}>
-              <i className='fas fa-redo'></i> Reset
-            </button>
-          </div>
-        </div>
-        <div className="d-flex p-3 pt-0">
-          <Dropdown className="w-100">
-            <Dropdown.Toggle as={EnvironmentToggle} className="btn-secondary w-100 d-inline-block border form-control" environmentUI={environmentUI}>
-              <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
-                <div className="text-truncate text-secondary">
-                  {<span >Remix VM</span>}
-                </div>
-              </div>
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light">
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div className="d-flex px-3">
-          <Dropdown className="w-100">
-            <Dropdown.Toggle as={AddressToggle} className="btn-secondary w-100 d-inline-block border form-control">
-              <div className="d-flex align-items-center">
-                <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm w-100">
-                  <div className="d-flex align-items-center justify-content-between w-100">
-                    <div className='d-flex flex-column align-items-start'>
-                      <div className="text-truncate text-secondary">
-                        <span>Account 1</span><i className="fa-solid fa-pen small ms-1"></i>
-                      </div>
-                      <div style={{ color: 'var(--bs-tertiary-color)' }}>
-                        <span className="small">0x5B3...eddC4</span><i className="fa-solid fa-copy small ms-1"></i>
-                      </div>
-                    </div>
-                    <div><span>100 ETH</span></div>
-                  </div>
-                </div>
-              </div>
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light">
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div className="mx-auto py-3" style={{ color: 'var(--bs-tertiary-color)' }}>
-          <span className="small me-1">Deployed Contracts</span><span className="small me-2 text-primary">2</span>
-          <span className="small me-1">Transactions recorded</span><span className="small text-primary">8</span>
-        </div>
-      </div>
       {/* <div className="udapp_runTabView run-tab" id="runTabView" data-id="runTabView">
         <div className="list-group pb-4 list-group-flush">
           <SettingsUI

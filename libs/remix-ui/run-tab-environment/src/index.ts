@@ -1,0 +1,1 @@
+export { default as EnvironmentWidget } from './lib/environment'

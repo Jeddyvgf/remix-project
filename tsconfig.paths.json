@@ -214,6 +214,9 @@
             ],
             "@remix-ui/template-explorer-modal": [
               "libs/remix-ui/template-explorer-modal/src/index.ts"
+            ],
+            "@remix-ui/run-tab-environment": [
+              "libs/remix-ui/run-tab-environment/src/index.ts"
             ]
         }
     }

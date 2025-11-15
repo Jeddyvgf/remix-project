@@ -24,7 +24,8 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getCurrentNetworkCurrency', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject', 'runTx', 'getBalanceInEther', 'getCurrentProvider', 'deployContractAndLibraries', 'runOrCallContractMethod'],
+  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getCurrentNetworkCurrency', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject', 'runTx', 'getBalanceInEther', 'getCurrentProvider', 'deployContractAndLibraries', 'runOrCallContractMethod', 'getStateDetails'],
+
   version: packageJson.version
 }
 
@@ -138,13 +139,13 @@ export class Blockchain extends Plugin {
       this.pinnedProviders.push(name)
       this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
       trackMatomoEvent(this, { category: 'blockchain', action: 'providerPinned', name: name, isClick: false })
-      this.emit('providersChanged')
+      // this.emit('providersChanged')
     })
     // used to pin and select newly created forked state provider
     this.on('udapp', 'forkStateProviderAdded', (providerName) => {
       const name = `vm-fs-${providerName}`
       trackMatomoEvent(this, { category: 'blockchain', action: 'providerPinned', name: name, isClick: false })
-      this.emit('providersChanged')
+      // this.emit('providersChanged')
       this.changeExecutionContext({ context: name }, null, null, null)
       this.call('notification', 'toast', `New environment '${providerName}' created with forked state.`)
     })
@@ -155,7 +156,7 @@ export class Blockchain extends Plugin {
       this.pinnedProviders.splice(index, 1)
       this.call('config', 'setAppParameter', 'settings/pinned-providers', JSON.stringify(this.pinnedProviders))
       trackMatomoEvent(this, { category: 'blockchain', action: 'providerUnpinned', name: name, isClick: false })
-      this.emit('providersChanged')
+      // this.emit('providersChanged')
     })
 
     this.call('config', 'getAppParameter', 'settings/pinned-providers').then((providers) => {
@@ -252,6 +253,10 @@ export class Blockchain extends Plugin {
     })
   }
 
+  async getStateDetails() {
+    return await this.executionContext.getStateDetails()
+  }
+
   async dumpState() {
     const provider = this.executionContext.getProviderObject()
 
@@ -265,7 +270,7 @@ export class Blockchain extends Plugin {
     if (isBasicVMState || isForkedVMState || isForkedRpcState) {
       if (this.config.get('settings/save-evm-state')) {
         try {
-          let state = await this.executionContext.getStateDetails()
+          let state = await this.getStateDetails()
           if (provider.config.statePath) {
             const stateFileExists = await this.call('fileManager', 'exists', provider.config.statePath)
             if (stateFileExists) {
@@ -730,24 +735,24 @@ export class Blockchain extends Plugin {
   }
 
   addProvider(provider: Provider) {
-    this.emit('shouldAddProvidertoUdapp', provider.name, provider)
+    // this.emit('shouldAddProvidertoUdapp', provider.name, provider)
     this.executionContext.addProvider(provider)
-    this.emit('providersChanged')
+    // this.emit('providersChanged')
   }
 
   removeProvider(name) {
     this.emit('shouldRemoveProviderFromUdapp', name, this.getProviderObjByName(name))
     this.executionContext.removeProvider(name)
-    this.emit('providersChanged')
+    // this.emit('providersChanged')
   }
 
   getAllProviders() {
     return this.executionContext.getAllProviders()
   }
 
-  getPinnedProviders() {
-    return this.pinnedProviders
-  }
+  // getPinnedProviders() {
+  //   return this.pinnedProviders
+  // }
 
   // TODO : event should be triggered by Udapp instead of TxListener
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
