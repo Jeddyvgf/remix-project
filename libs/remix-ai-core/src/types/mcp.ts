@@ -169,32 +169,22 @@ export interface IResourceScore {
  * Enhanced resource selection result
  */
 export interface IResourceSelectionResult {
-  /** Selected resources with scores */
   selectedResources: IResourceScore[];
-  /** Total resources considered */
   totalResourcesConsidered: number;
-  /** Selection strategy used */
   strategy: 'priority' | 'semantic' | 'hybrid';
-  /** Intent analysis result */
   intent: IUserIntent;
 }
 
-/**
- * Extended MCP provider configuration with intent matching
- */
 export interface IEnhancedMCPProviderParams extends IMCPProviderParams {
-  /** Enable intelligent resource selection */
   enableIntentMatching?: boolean;
-  /** Minimum relevance score threshold */
   relevanceThreshold?: number;
-  /** Resource selection strategy */
   selectionStrategy?: 'priority' | 'semantic' | 'hybrid';
-  /** Domain-specific weights */
   domainWeights?: Record<string, number>;
-  /** Enable query expansion */
   enableQueryExpansion?: boolean;
-  /** Maximum query expansion terms */
   maxExpansionTerms?: number;
+  enableToolScoring?: boolean;
+  toolRelevanceThreshold?: number;
+  maxTools?: number;
 }
 
 /**

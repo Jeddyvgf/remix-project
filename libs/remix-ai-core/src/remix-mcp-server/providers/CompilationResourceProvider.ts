@@ -231,7 +231,6 @@ export class CompilationResourceProvider extends BaseResourceProvider {
           };
         }
       }
-
       return this.createJsonContent('compilation://contracts', {
         compiledContracts: filteredContracts,
         count: Object.keys(filteredContracts).length,

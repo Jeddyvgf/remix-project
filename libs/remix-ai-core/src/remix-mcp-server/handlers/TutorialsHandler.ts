@@ -16,7 +16,7 @@ import { Plugin } from '@remixproject/engine';
  */
 export class TutorialsHandler extends BaseToolHandler {
   name = 'tutorials';
-  description = 'Use learneth to start a tutorial';
+  description = 'Use learneth to start a tutorial. Solidity basics and advanced topics.';
   inputSchema = {
     type: 'object',
     properties: {

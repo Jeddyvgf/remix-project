@@ -22,8 +22,8 @@ export const mcpDefaultServersConfig: MCPDefaultServersConfig = {
       description: 'OpenZeppelin smart contract library and security tools',
       transport: 'http',
       url: 'https://mcp.openzeppelin.com/contracts/solidity/mcp',
-      autoStart: true,
-      enabled: true,
+      autoStart: false,
+      enabled: false,
       timeout: 30000
     },
     {
@@ -31,8 +31,8 @@ export const mcpDefaultServersConfig: MCPDefaultServersConfig = {
       description: 'OpenZeppelin smart contract library and security tools',
       transport: 'http',
       url: 'https://mcp.openzeppelin.com/contracts/cairo/mcp',
-      autoStart: true,
-      enabled: true,
+      autoStart: false,
+      enabled: false,
       timeout: 30000
     },
     {
@@ -40,8 +40,8 @@ export const mcpDefaultServersConfig: MCPDefaultServersConfig = {
       description: 'OpenZeppelin smart contract library and security tools',
       transport: 'http',
       url: 'https://mcp.openzeppelin.com/contracts/stellar/mcp',
-      autoStart: true,
-      enabled: true,
+      autoStart: false,
+      enabled: false,
       timeout: 30000
     },
     {
@@ -49,8 +49,8 @@ export const mcpDefaultServersConfig: MCPDefaultServersConfig = {
       description: 'OpenZeppelin smart contract library and security tools',
       transport: 'http',
       url: 'https://mcp.openzeppelin.com/contracts/stylus/mcp',
-      autoStart: true,
-      enabled: true,
+      autoStart: false,
+      enabled: false,
       timeout: 30000
     }
   ]

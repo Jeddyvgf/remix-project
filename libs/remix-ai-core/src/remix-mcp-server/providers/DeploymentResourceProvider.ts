@@ -579,17 +579,18 @@ export class DeploymentResourceProvider extends BaseResourceProvider {
       }
 
       const config = {
-        environment: {
-          current: provider.displayName || provider.name || 'unknown',
-          provider: provider.name,
-          providerType: provider.kind || 'unknown',
-          isInjected: provider.isInjected || false,
-          networkName: networkName,
-          chainId: chainId,
-          networkId: chainId,
-          available: availableProviders.map((p: any) => p.displayName || p.name)
-        },
-        accounts: accounts,
+        networkName: networkName,
+        // environment: {
+        //   current: provider.displayName || provider.name || 'unknown',
+        //   provider: provider.name,
+        //   providerType: provider.kind || 'unknown',
+        //   isInjected: provider.isInjected || false,
+        //   networkName: networkName,
+        //   chainId: chainId,
+        //   networkId: chainId,
+        //   available: availableProviders.map((p: any) => p.displayName || p.name)
+        // },
+        // accounts: accounts,
         selectedAccount: runTabApi.accounts?.selectedAccount || null,
         totalAccounts: accounts.length,
         gas: {

@@ -16,6 +16,7 @@ import {
 } from "../../types/mcp";
 import { IntentAnalyzer } from "../../services/intentAnalyzer";
 import { ResourceScoring } from "../../services/resourceScoring";
+import { ToolScoring } from "../../services/toolScoring";
 import { RemixMCPServer } from '@remix/remix-ai-core';
 import { endpointUrls } from "@remix-endpoints-helper"
 import { text } from "stream/consumers";
@@ -726,10 +727,9 @@ export class MCPInferencer extends RemoteInferencer implements ICompletions, IGe
   private mcpClients: Map<string, MCPClient> = new Map();
   private connectionStatuses: Map<string, IMCPConnectionStatus> = new Map();
   private resourceCache: Map<string, IMCPResourceContent> = new Map();
-  private resourceListCache: Map<string, { resources: IMCPResource[], timestamp: number }> = new Map();
-  private cacheTimeout: number = 5000;
   private intentAnalyzer: IntentAnalyzer = new IntentAnalyzer();
   private resourceScoring: ResourceScoring = new ResourceScoring();
+  private toolScoring: ToolScoring = new ToolScoring();
   private remixMCPServer?: any; // Internal RemixMCPServer instance
   private MAX_TOOL_EXECUTIONS = 10;
 
@@ -937,7 +937,7 @@ export class MCPInferencer extends RemoteInferencer implements ICompletions, IGe
       // Select best resources
       const selectedResources = this.resourceScoring.selectResources(
         scoredResources,
-        mcpParams.maxResources || 3,
+        mcpParams.maxResources || 5,
         mcpParams.selectionStrategy || 'hybrid'
       );
 
@@ -1055,8 +1055,17 @@ export class MCPInferencer extends RemoteInferencer implements ICompletions, IGe
     const mcpContext = await this.enrichContextWithMCPResources(options, prompt);
     const enrichedPrompt = mcpContext ? `${mcpContext}\n\n${prompt}` : prompt;
 
+    // Extract MCP params for tool scoring configuration
+    const mcpParams = (options as any).mcp as IEnhancedMCPProviderParams;
+    const toolScoringParams: IEnhancedMCPProviderParams = {
+      enableToolScoring: mcpParams?.enableToolScoring !== false, // Default to true
+      toolRelevanceThreshold: mcpParams?.toolRelevanceThreshold || 0.3,
+      maxTools: mcpParams?.maxTools || 15,
+      selectionStrategy: mcpParams?.selectionStrategy || 'hybrid'
+    };
+
     // Add available tools to the request in LLM format
-    const llmFormattedTools = await this.getToolsForLLMRequest(options.provider);
+    const llmFormattedTools = await this.getToolsForLLMRequest(options.provider, prompt, toolScoringParams);
     const enhancedOptions = {
       ...options,
       tools: llmFormattedTools.length > 0 ? llmFormattedTools : undefined,
@@ -1205,8 +1214,17 @@ export class MCPInferencer extends RemoteInferencer implements ICompletions, IGe
     const mcpContext = await this.enrichContextWithMCPResources(options, prompt);
     const enrichedContext = mcpContext ? `${mcpContext}\n\n${context}` : context;
 
+    // Extract MCP params for tool scoring configuration
+    const mcpParams = (options as any).mcp as IEnhancedMCPProviderParams;
+    const toolScoringParams: IEnhancedMCPProviderParams = {
+      enableToolScoring: mcpParams?.enableToolScoring !== false, // Default to true
+      toolRelevanceThreshold: mcpParams?.toolRelevanceThreshold || 0.3,
+      maxTools: mcpParams?.maxTools || 15,
+      selectionStrategy: mcpParams?.selectionStrategy || 'hybrid'
+    };
+
     // Add available tools to the request in LLM format
-    const llmFormattedTools = await this.getToolsForLLMRequest(options.provider);
+    const llmFormattedTools = await this.getToolsForLLMRequest(options.provider, prompt, toolScoringParams);
     options.stream_result = false
     const enhancedOptions = {
       ...options,
@@ -1359,22 +1377,64 @@ export class MCPInferencer extends RemoteInferencer implements ICompletions, IGe
     return allTools;
   }
 
-  async getToolsForLLMRequest(provider?: string): Promise<any[]> {
+  async getToolsForLLMRequest(provider?: string, prompt?: string, params?: IEnhancedMCPProviderParams): Promise<any[]> {
     const mcpTools = await this.getAvailableToolsForLLM();
+
+    let relevantTools = mcpTools;
+
+    if (params?.enableToolScoring && prompt) {
+      try {
+        const intent = await this.intentAnalyzer.analyzeIntent(prompt);
+
+        // Prepare tools with server information for scoring
+        const toolsWithServer = mcpTools.map(tool => ({
+          tool,
+          serverName: (tool as any)._mcpServer || 'Unknown'
+        }));
+
+        // Score tools against intent
+        const scoredTools = await this.toolScoring.scoreTools(
+          toolsWithServer,
+          intent,
+          prompt,
+          params
+        );
+
+        const selectedTools = this.toolScoring.selectTools(
+          scoredTools,
+          params.maxTools || 20,
+          params.selectionStrategy || 'hybrid'
+        );
+
+        this.event.emit('mcpToolSelection', {
+          intent,
+          totalToolsConsidered: mcpTools.length,
+          selectedTools: selectedTools.map(t => ({
+            name: t.tool.name,
+            score: t.score,
+            reasoning: t.reasoning
+          }))
+        });
+
+        relevantTools = selectedTools.map(st => st.tool);
+      } catch (error) {
+        relevantTools = mcpTools;
+      }
+    }
 
     // Format tools based on provider
     let convertedTools: any[];
 
     if (provider === 'anthropic') {
       // Anthropic format: direct object with name, description, input_schema
-      convertedTools = mcpTools.map(tool => ({
+      convertedTools = relevantTools.map(tool => ({
         name: tool.name,
         description: tool.description,
         input_schema: tool.inputSchema
       }));
     } else {
       // OpenAI and other providers format: type + function wrapper
-      convertedTools = mcpTools.map(tool => ({
+      convertedTools = relevantTools.map(tool => ({
         type: "function",
         function: {
           name: tool.name,
