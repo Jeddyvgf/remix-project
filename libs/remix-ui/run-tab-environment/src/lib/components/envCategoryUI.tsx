@@ -29,7 +29,7 @@ export function EnvCategoryUI () {
       e.preventDefault()
       e.stopPropagation()
     }}>
-      <Dropdown.Toggle as={CustomToggle} className="btn btn-secondary w-100 d-inline-block pe-0" icon="fas fa-caret-down text-secondary ms-2" useDefaultIcon={false}>
+      <Dropdown.Toggle as={CustomToggle} className="btn btn-secondary w-100 d-inline-block pe-0" icon="fas fa-caret-down text-secondary ms-2" useDefaultIcon={false} style={{ backgroundColor: 'var(--custom-onsurface-layer-3)' }}>
         <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
           <div className="text-truncate text-secondary">
             {<span data-id="selectedVersion">{provider?.displayName}</span>}
@@ -37,10 +37,10 @@ export function EnvCategoryUI () {
         </div>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light">
+      <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden" style={{ backgroundColor: 'var(--custom-onsurface-layer-3)' }}>
         {subCategories.map((provider) => {
           return (
-            <Dropdown.Item key={provider.name} onClick={() => handleCategorySelection(provider)}>
+            <Dropdown.Item key={provider.name} onClick={() => handleCategorySelection(provider)} className="category-item-hover">
               {provider.displayName}
             </Dropdown.Item>
           )

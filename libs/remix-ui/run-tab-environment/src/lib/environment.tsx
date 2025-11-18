@@ -4,16 +4,25 @@ import isElectron from 'is-electron'
 import { EnvAppContext } from './contexts'
 import { widgetInitialState, widgetReducer } from './reducers'
 import EnvironmentPortraitView from './widgets/envPortraitView'
-import { addFVSProvider, addProvider, registerInjectedProvider } from './actions'
+import { addFVSProvider, addProvider, getAccountsList, registerInjectedProvider } from './actions'
 import { Blockchain, ProviderDetailsEvent } from './types'
 import { Engine, Plugin } from '@remixproject/engine'
 
-function EnvironmentWidget({ plugin }: { plugin: Plugin & { engine: Engine, blockchain: Blockchain } }) {
+function EnvironmentWidget({ plugin }: { plugin: Plugin & { engine: Engine, blockchain: Blockchain, setStateGetter?: (getter: () => any) => void } }) {
   const [widgetState, dispatch] = useReducer(widgetReducer, widgetInitialState)
 
   useEffect(() => {
+    if (plugin.setStateGetter) {
+      plugin.setStateGetter(() => widgetState)
+    }
+  }, [plugin, widgetState])
+
+  useEffect(() => {
     (async () => {
-    // VM
+      dispatch({ type: 'LOADING_ALL_PROVIDERS', payload: null })
+      dispatch({ type: 'LOADING_ALL_ACCOUNTS', payload: null })
+      await plugin.call('blockchain', 'resetAndInit')
+      // VM
       const titleVM = 'Execution environment is local to Remix.  Data is only saved to browser memory and will vanish upon reload.'
       await addProvider({ position: 1, name: 'vm-prague', displayName: 'Prague', category: 'Remix VM', providerConfig: { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-prague/state.json', fork: 'prague' }, dataId: 'settingsVMPectraMode', title: titleVM }, plugin, dispatch)
       await addProvider({ position: 2, name: 'vm-cancun', displayName: 'Cancun', category: 'Remix VM', providerConfig: { isInjected: false, isVM: true, isRpcForkedState: false, statePath: '.states/vm-cancun/state.json', fork: 'cancun' }, dataId: 'settingsVMCancunMode', title: titleVM }, plugin, dispatch)
@@ -48,6 +57,7 @@ function EnvironmentWidget({ plugin }: { plugin: Plugin & { engine: Engine, bloc
         }
       )
       if (!isElectron()) window.dispatchEvent(new Event("eip6963:requestProvider"))
+      dispatch({ type: 'COMPLETED_LOADING_ALL_PROVIDERS', payload: null })
     })()
 
     plugin.on('filePanel', 'workspaceInitializationCompleted', async () => {
@@ -61,6 +71,35 @@ function EnvironmentWidget({ plugin }: { plugin: Plugin & { engine: Engine, bloc
           await addFVSProvider(filePath, pos, plugin, dispatch)
         }
       }
+    })
+
+    plugin.on('blockchain', 'networkStatus', async ({ error, network }) => {
+      // if (error) {
+      //   const netUI = 'can\'t detect network'
+      //   setNetworkNameFromProvider(dispatch, netUI)
+      //   return
+      // }
+      // const networkProvider = await plugin.call('network', 'getNetworkProvider')
+      // const isVM = networkProvider().startsWith('vm') ? true : false
+      // const netUI = !isVM ? `${network.name} (${network.id || '-'}) network` : 'VM'
+      // const pinnedChainId = !isVM ? network.id : networkProvider()
+      // setNetworkNameFromProvider(dispatch, netUI)
+      // setPinnedChainId(dispatch, pinnedChainId)
+
+      // // Check if provider is changed or network is changed for same provider e.g; Metamask
+      // if (currentNetwork.provider !== networkProvider() || (!isVM && currentNetwork.chainId !== network.id)) {
+      //   currentNetwork.provider = networkProvider()
+      //   if (!isVM) {
+      //     fillAccountsList(plugin, dispatch)
+      //     currentNetwork.chainId = network.id
+      //     await loadPinnedContracts(plugin, dispatch, pinnedChainId)
+      //   }
+      // }
+    })
+
+    plugin.on('blockchain', 'contextChanged', async (context) => {
+      await getAccountsList(plugin, dispatch, widgetState)
+      dispatch({ type: 'COMPLETED_LOADING_ALL_ACCOUNTS', payload: null })
     })
 
   }, [])

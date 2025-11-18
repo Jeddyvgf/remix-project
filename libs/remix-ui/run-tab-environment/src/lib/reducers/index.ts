@@ -8,12 +8,64 @@ export const widgetInitialState: WidgetState = {
     isRequesting: false,
     isSuccessful: false,
     error: null
+  },
+  accounts: {
+    selectedAccount: '',
+    smartAccounts: [],
+    defaultAccounts: [],
+    isRequesting: false,
+    isSuccessful: false,
+    error: null
+  },
+  network: {
+    chainId: '',
+    name: ''
   }
 }
 
 export const widgetReducer = (state = widgetInitialState, action: Actions): WidgetState => {
 // @ts-ignore
   switch (action.type) {
+
+  case 'LOADING_ALL_PROVIDERS':
+    return {
+      ...state,
+      providers: {
+        ...state.providers,
+        isRequesting: true,
+        isSuccessful: false
+      }
+    }
+
+  case 'COMPLETED_LOADING_ALL_PROVIDERS':
+    return {
+      ...state,
+      providers: {
+        ...state.providers,
+        isRequesting: false,
+        isSuccessful: true
+      }
+    }
+
+  case 'LOADING_ALL_ACCOUNTS':
+    return {
+      ...state,
+      accounts: {
+        ...state.accounts,
+        isRequesting: true,
+        isSuccessful: false
+      }
+    }
+
+  case 'COMPLETED_LOADING_ALL_ACCOUNTS':
+    return {
+      ...state,
+      accounts: {
+        ...state.accounts,
+        isRequesting: false,
+        isSuccessful: true
+      }
+    }
 
   case 'SET_CURRENT_PROVIDER':
     return {
@@ -45,7 +97,6 @@ export const widgetReducer = (state = widgetInitialState, action: Actions): Widg
         providerList.push(payload)
       }
     }
-    console.log('providerList: ', providerList)
     return {
       ...state,
       providers: {
@@ -69,6 +120,37 @@ export const widgetReducer = (state = widgetInitialState, action: Actions): Widg
           ...providerList,
           [payload.category]: providers
         }
+      }
+    }
+  }
+
+  case 'SET_ACCOUNTS': {
+    console.log('SET_ACCOUNTS', action.payload)
+    return {
+      ...state,
+      accounts: {
+        ...state.accounts,
+        defaultAccounts: action.payload
+      }
+    }
+  }
+
+  case 'SET_SMART_ACCOUNTS': {
+    return {
+      ...state,
+      accounts: {
+        ...state.accounts,
+        smartAccounts: action.payload
+      }
+    }
+  }
+
+  case 'SET_SELECTED_ACCOUNT': {
+    return {
+      ...state,
+      accounts: {
+        ...state.accounts,
+        selectedAccount: action.payload
       }
     }
   }

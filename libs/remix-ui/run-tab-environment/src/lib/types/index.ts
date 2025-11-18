@@ -22,13 +22,32 @@ export interface WidgetState {
     isRequesting: boolean,
     isSuccessful: boolean,
     error: string
+  },
+  accounts: {
+    selectedAccount: string,
+    defaultAccounts: Account[],
+    smartAccounts: Account[],
+    isRequesting: boolean,
+    isSuccessful: boolean,
+    error: string
+  },
+  network: {
+    chainId: string,
+    name: string
   }
 }
 
 export interface ActionPayloadTypes {
   SET_CURRENT_PROVIDER: string,
   ADD_PROVIDER: Provider,
-  REMOVE_PROVIDER: Provider
+  REMOVE_PROVIDER: Provider,
+  LOADING_ALL_PROVIDERS: undefined,
+  COMPLETED_LOADING_ALL_PROVIDERS: undefined,
+  LOADING_ALL_ACCOUNTS: undefined,
+  COMPLETED_LOADING_ALL_ACCOUNTS: undefined,
+  SET_ACCOUNTS: Account[],
+  SET_SMART_ACCOUNTS: Account[],
+  SET_SELECTED_ACCOUNT: string
 }
 export interface Action<T extends keyof ActionPayloadTypes> {
   type: T
@@ -140,7 +159,7 @@ export interface Blockchain extends Plugin<any, any> {
   getTxListener(opts: any): any;
   runOrCallContractMethod(contractName: any, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any): void;
   context(): "memory" | "blockchain";
-  resetAndInit(config: any, transactionContextAPI: any): void;
+  resetAndInit(): void;
   transactionContextAPI: any;
   addProvider(provider: any): void;
   removeProvider(name: any): void;
@@ -201,4 +220,11 @@ export interface ExecutionContext {
   listenOnLastBlock(): void;
   txDetailsLink(network: any, hash: any): any;
   getStateDetails(): Promise<string>
+}
+
+export type Account = {
+  alias: string,
+  account: string,
+  balance: string,
+  symbol?: string
 }

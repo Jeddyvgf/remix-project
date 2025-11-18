@@ -24,7 +24,7 @@ const profile = {
   name: 'blockchain',
   displayName: 'Blockchain',
   description: 'Blockchain - Logic',
-  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getCurrentNetworkCurrency', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject', 'runTx', 'getBalanceInEther', 'getCurrentProvider', 'deployContractAndLibraries', 'runOrCallContractMethod', 'getStateDetails'],
+  methods: ['dumpState', 'getCode', 'getTransactionReceipt', 'addProvider', 'removeProvider', 'getCurrentFork', 'isSmartAccount', 'getAccounts', 'web3VM', 'web3', 'getProvider', 'getCurrentProvider', 'getCurrentNetworkStatus', 'getCurrentNetworkCurrency', 'getAllProviders', 'getPinnedProviders', 'changeExecutionContext', 'getProviderObject', 'runTx', 'getBalanceInEther', 'getCurrentProvider', 'deployContractAndLibraries', 'runOrCallContractMethod', 'getStateDetails', 'resetAndInit'],
 
   version: packageJson.version
 }
@@ -218,8 +218,8 @@ export class Blockchain extends Plugin {
     return this.networkNativeCurrency
   }
 
-  isSmartAccount(address) {
-    return this.transactionContextAPI.isSmartAccount(address)
+  async isSmartAccount(address) {
+    return await this.call('udappEnv', 'isSmartAccount', address)
   }
 
   setupProviders() {
@@ -726,10 +726,9 @@ export class Blockchain extends Plugin {
     return this.executionContext.isVM() ? 'memory' : 'blockchain'
   }
 
-  // NOTE: the config is only needed because executionContext.init does
-  async resetAndInit(config: Config, transactionContextAPI: TransactionContextAPI) {
-    this.transactionContextAPI = transactionContextAPI
-    this.executionContext.init(config)
+  resetAndInit() {
+    // this.transactionContextAPI = transactionContextAPI
+    this.executionContext.init()
     this.executionContext.stopListenOnLastBlock()
     this.executionContext.listenOnLastBlock()
   }
@@ -965,33 +964,32 @@ export class Blockchain extends Plugin {
         })
       })
     }
-    const getAccount = () => {
+    const getAccount = async() => {
       return new Promise((resolve, reject) => {
         if (args.from) {
           return resolve(args.from)
         }
-        if (this.transactionContextAPI.getAddress) {
-          return this.transactionContextAPI.getAddress(function (err, address) {
+        this.call('udappEnv', 'getSelectedAccount').then((address) => {
+          if (!address)
+            return reject(
+              '"from" is not defined. Please make sure an account is selected. If you are using a public node, it is likely that no account will be provided. In that case, add the public node to your injected provider (type Metamask) and use injected provider in Remix.'
+            )
+          return resolve(address)
+        }).catch(() => {
+          this.getAccounts(function (err, accounts) {
             if (err) return reject(err)
-            if (!address)
-              return reject(
-                '"from" is not defined. Please make sure an account is selected. If you are using a public node, it is likely that no account will be provided. In that case, add the public node to your injected provider (type Metamask) and use injected provider in Remix.'
-              )
+            const address = accounts[0]
+
+            if (!address) return reject('No accounts available')
+            if (this.executionContext.isVM() && !this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
+              return reject('Invalid account selected')
+            }
             return resolve(address)
           })
-        }
-        this.getAccounts(function (err, accounts) {
-          if (err) return reject(err)
-          const address = accounts[0]
-
-          if (!address) return reject('No accounts available')
-          if (this.executionContext.isVM() && !this.providers.vm.RemixSimulatorProvider.Accounts.accounts[address]) {
-            return reject('Invalid account selected')
-          }
-          return resolve(address)
         })
       })
     }
+
     const runTransaction = async () => {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {

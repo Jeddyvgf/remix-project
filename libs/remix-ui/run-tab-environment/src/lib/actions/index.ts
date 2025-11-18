@@ -6,6 +6,7 @@ import { IntlShape } from "react-intl"
 import { ForkedStatePrompt } from "../components/forkedStatePrompt"
 import { addFVSProvider } from "./providers"
 import React from "react"
+import { aaLocalStorageKey } from "@remix-project/remix-lib"
 export * from "./providers"
 
 export async function resetVmState (plugin: Plugin, widgetState: WidgetState, intl: IntlShape) {
@@ -106,7 +107,7 @@ export async function setExecutionContext (provider: Provider, plugin: Plugin, w
   }
 }
 
-const setWalletConnectExecutionContext = async (plugin: Plugin, executionContext: { context: string, fork: string }) => {
+async function setWalletConnectExecutionContext (plugin: Plugin, executionContext: { context: string, fork: string }) {
   await plugin.call('walletconnect', 'openModal')
   plugin.on('walletconnect', 'connectionSuccessful', () => {
     plugin.call('blockchain', 'changeExecutionContext', executionContext, null, (alertMsg) => {
@@ -123,8 +124,72 @@ const setWalletConnectExecutionContext = async (plugin: Plugin, executionContext
   })
 }
 
-const cleanupWalletConnectEvents = (plugin: Plugin) => {
+function cleanupWalletConnectEvents (plugin: Plugin) {
   plugin.off('walletconnect', 'connectionFailed')
   plugin.off('walletconnect', 'connectionDisconnected')
   plugin.off('walletconnect', 'connectionSuccessful')
+}
+
+export async function getAccountsList (plugin: Plugin & { blockchain: Blockchain }, dispatch: React.Dispatch<Actions>, widgetState: WidgetState) {
+  let accounts = await plugin.call('blockchain', 'getAccounts')
+  const provider = await plugin.call('blockchain', 'getProvider')
+  let safeAddresses = []
+
+  if (provider && provider.startsWith('injected') && accounts?.length) {
+    await loadSmartAccounts(widgetState)
+    if (widgetState.accounts.smartAccounts) {
+      safeAddresses = Object.keys(widgetState.accounts.smartAccounts)
+      accounts.push(...safeAddresses)
+    }
+  }
+  if (!accounts) accounts = []
+
+  const defaultAccounts = []
+  const smartAccounts = []
+  let index = 1
+  for (const account of accounts) {
+    const balance = await plugin.blockchain.getBalanceInEther(account)
+    if (provider.startsWith('injected') && plugin.blockchain && plugin.blockchain['networkNativeCurrency'] && plugin.blockchain['networkNativeCurrency'].symbol)
+      defaultAccounts.push({
+        alias: `Account ${index}`,
+        account: account,
+        balance: balance,
+        symbol: plugin.blockchain['networkNativeCurrency'].symbol
+      })
+    else
+      defaultAccounts.push({
+        alias: `Account ${index}`,
+        account: account,
+        balance: balance,
+        symbol: plugin.blockchain['networkNativeCurrency'].symbol
+      })
+    if (safeAddresses.length && safeAddresses.includes(account)) smartAccounts.push({
+      alias: `Account ${index}`,
+      account: account,
+      balance: balance
+    })
+    index++
+  }
+
+  dispatch({ type: 'SET_ACCOUNTS', payload: defaultAccounts })
+  dispatch({ type: 'SET_SMART_ACCOUNTS', payload: smartAccounts })
+}
+
+function loadSmartAccounts (widgetState: WidgetState) {
+  const { chainId } = widgetState.network
+  const smartAccountsStr = localStorage.getItem(aaLocalStorageKey)
+
+  if (smartAccountsStr) {
+    const smartAccountsObj = JSON.parse(smartAccountsStr)
+    if (smartAccountsObj[chainId]) {
+      widgetState.accounts.smartAccounts = smartAccountsObj[chainId]
+    } else {
+      smartAccountsObj[chainId] = {}
+      localStorage.setItem(aaLocalStorageKey, JSON.stringify(smartAccountsObj))
+    }
+  } else {
+    const objToStore = {}
+    objToStore[chainId] = {}
+    localStorage.setItem(aaLocalStorageKey, JSON.stringify(objToStore))
+  }
 }

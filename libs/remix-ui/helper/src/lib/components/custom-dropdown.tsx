@@ -12,13 +12,15 @@ export const CustomToggle = React.forwardRef(
       onClick,
       icon,
       className = '',
-      useDefaultIcon = true
+      useDefaultIcon = true,
+      style
     }: {
       children: React.ReactNode
       onClick: (e) => void
       icon: string
       className: string
       useDefaultIcon?: boolean
+      style?: React.CSSProperties
     },
     ref: Ref<HTMLButtonElement>
   ) => (
@@ -29,6 +31,7 @@ export const CustomToggle = React.forwardRef(
         onClick(e)
       }}
       className={className.replace('dropdown-toggle', '')}
+      style={style}
     >
       <div className="d-flex align-items-center">
         <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm" data-id={`dropdown-content`}>{children}</div>
@@ -231,9 +234,9 @@ export const EnvironmentToggle = React.forwardRef(
       className: string
       environmentUI: React.ReactNode
     },
-    ref: Ref<HTMLButtonElement>
+    ref: Ref<HTMLDivElement>
   ) => (
-    <button
+    <div
       ref={ref}
       onClick={(e) => {
         e.preventDefault()
@@ -245,7 +248,7 @@ export const EnvironmentToggle = React.forwardRef(
         <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm">{children}</div>
         {environmentUI}
       </div>
-    </button>
+    </div>
   )
 )
 

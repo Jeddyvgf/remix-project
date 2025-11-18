@@ -92,6 +92,7 @@ export const isNumeric = (value) => {
 }
 
 export const shortenAddress = (address, etherBalance?, currency = 'ETH') => {
+  if (!address) return
   const len = address.length
 
   return address.slice(0, 5) + '...' + address.slice(len - 5, len) + (etherBalance ? ' (' + etherBalance.toString() + ' ' + currency + ')' : '')

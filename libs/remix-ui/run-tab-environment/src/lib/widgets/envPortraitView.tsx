@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react'
-import { CustomMenu, EnvironmentToggle } from "@remix-ui/helper"
+import React, { useMemo, useState } from 'react'
+import { AddressToggle, CustomMenu, EnvironmentToggle, shortenAddress } from "@remix-ui/helper"
 import { Dropdown } from "react-bootstrap"
 import { useIntl } from 'react-intl'
 import { EnvAppContext } from '../contexts'
@@ -8,7 +8,7 @@ import { TrackingContext } from '@remix-ide/tracking'
 import { MatomoEvent, UdappEvent } from '@remix-api'
 import { forkState, resetVmState, setExecutionContext } from '../actions'
 import { EnvCategoryUI } from '../components/envCategoryUI'
-import { Provider } from '../types'
+import { Provider, Account } from '../types'
 
 function EnvironmentPortraitView() {
   const { plugin, widgetState, dispatch } = useContext(EnvAppContext)
@@ -32,7 +32,10 @@ function EnvironmentPortraitView() {
     setExecutionContext(provider, plugin, widgetState, dispatch)
   }
 
-  // Create unique dropdown items: one per category for providers with categories, individual entries for providers without
+  const handleAccountSelection = (account: Account) => {
+    dispatch({ type: 'SET_SELECTED_ACCOUNT', payload: account.account })
+  }
+
   const uniqueDropdownItems = useMemo(() => {
     const categoryMap = new Map<string, Provider>()
     const itemsWithoutCategory: Provider[] = []
@@ -49,12 +52,34 @@ function EnvironmentPortraitView() {
       }
     })
 
-    // Combine unique categories and providers without categories
     return [...Array.from(categoryMap.values()), ...itemsWithoutCategory]
   }, [widgetState.providers.providerList])
 
+  const selectedProvider = useMemo(() => {
+    return widgetState.providers.providerList.find(provider => provider.name === widgetState.providers.selectedProvider)
+  }, [widgetState.providers.selectedProvider])
+
+  const selectedAccount = useMemo(() => {
+    return widgetState.accounts.defaultAccounts.find(account => account.account === widgetState.accounts.selectedAccount) || widgetState.accounts.defaultAccounts[0]
+  }, [widgetState.accounts.selectedAccount, widgetState.accounts.defaultAccounts])
+
   return (
     <>
+      <style>{`
+        .environment-item-hover:hover {
+          background-color: var(--custom-onsurface-layer-3) !important;
+          border: 1px solid var(--bs-border-color) !important;
+        }
+        .account-item-hover:hover {
+          background-color: var(--custom-onsurface-layer-3) !important;
+          border: 1px solid var(--bs-border-color) !important;
+          border-radius: 0.375rem !important;
+        }
+        .category-item-hover:hover {
+          background-color: var(--custom-onsurface-layer-4) !important;
+          border: 1px solid var(--bs-border-color) !important;
+        }
+      `}</style>
       <div className='card ms-2 bg-light'>
         <div className="d-flex align-items-center justify-content-between p-3">
           <div className="d-flex align-items-center">
@@ -73,25 +98,22 @@ function EnvironmentPortraitView() {
           <Dropdown className="w-100">
             <Dropdown.Toggle
               as={EnvironmentToggle}
-              className="btn-secondary w-100 d-inline-block border form-control"
+              className="w-100 d-inline-block border form-control"
               environmentUI={<EnvCategoryUI />}
+              style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}
             >
               <div style={{ flexGrow: 1, overflow: 'hidden', display:'flex', justifyContent:'left' }}>
                 <div className="text-truncate text-secondary">
-                  <span> {
-                    widgetState.providers.providerList.find(provider => provider.name === widgetState.providers.selectedProvider)?.category
-                    || widgetState.providers.providerList.find(provider => provider.name === widgetState.providers.selectedProvider)?.displayName
-                    || 'Remix VM'
-                  }</span>
+                  <span> { selectedProvider?.category || selectedProvider?.displayName || 'Remix VM' }</span>
                 </div>
               </div>
             </Dropdown.Toggle>
 
-            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light">
+            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden" style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}>
               {
-                uniqueDropdownItems.map((provider) => {
+                uniqueDropdownItems.map((provider, index) => {
                   return (
-                    <Dropdown.Item key={provider.name} onClick={() => handleProviderSelection(provider)}>
+                    <Dropdown.Item key={index} onClick={() => handleProviderSelection(provider)} className="environment-item-hover">
                       {provider.category ? provider.category : provider.displayName}
                     </Dropdown.Item>
                   )})
@@ -99,34 +121,51 @@ function EnvironmentPortraitView() {
             </Dropdown.Menu>
           </Dropdown>
         </div>
-        {/* <div className="d-flex px-3">
+        <div className="d-flex px-3">
           <Dropdown className="w-100">
-            <Dropdown.Toggle as={AddressToggle} className="btn-secondary w-100 d-inline-block border form-control">
+            <Dropdown.Toggle as={AddressToggle} className="w-100 d-inline-block border form-control" style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}>
               <div className="d-flex align-items-center">
                 <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm w-100">
                   <div className="d-flex align-items-center justify-content-between w-100">
                     <div className='d-flex flex-column align-items-start'>
-                      <div className="text-truncate text-secondary">
-                        <span>{environmentSchema.accountList[0].name}</span><i className="fa-solid fa-pen small ms-1"></i>
+                      <div className="text-truncate text-dark">
+                        <span>{selectedAccount?.alias}</span><i className="fa-solid fa-pen small ms-1"></i>
                       </div>
                       <div style={{ color: 'var(--bs-tertiary-color)' }}>
-                        <span className="small">{environmentSchema.accountList[0].address}</span><i className="fa-solid fa-copy small ms-1"></i>
+                        <span className="small">{shortenAddress(selectedAccount?.account)}</span><i className="fa-solid fa-copy small ms-1"></i>
                       </div>
                     </div>
-                    <div><span>{environmentSchema.accountList[0].balance}</span></div>
+                    <div style={{ color: 'var(--bs-tertiary-color)' }}><span>{`${selectedAccount?.balance} ${selectedAccount?.symbol}`}</span></div>
                   </div>
                 </div>
               </div>
             </Dropdown.Toggle>
 
-            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden bg-light">
+            <Dropdown.Menu as={CustomMenu} className="w-100 custom-dropdown-items overflow-hidden" style={{ backgroundColor: 'var(--custom-onsurface-layer-2)' }}>
+              {
+                widgetState.accounts.defaultAccounts.map((account, index) => {
+                  return (
+                    <Dropdown.Item key={index} className="d-flex align-items-center justify-content-between p-1 m-1 account-item-hover" onClick={() => handleAccountSelection(account)} style={{ cursor: 'pointer' }}>
+                      <div className='d-flex flex-column align-items-start'>
+                        <div className="text-truncate text-dark">
+                          <span>{account?.alias}</span>
+                        </div>
+                        <div style={{ color: 'var(--bs-tertiary-color)' }}>
+                          <span className="small">{shortenAddress(account?.account)}</span><i className="fa-solid fa-copy small ms-1"></i>
+                        </div>
+                      </div>
+                      <div style={{ color: 'var(--bs-tertiary-color)' }}>{`${account?.balance} ${account?.symbol}`}</div>
+                    </Dropdown.Item>
+                  )
+                })
+              }
             </Dropdown.Menu>
           </Dropdown>
         </div>
         <div className="mx-auto py-3" style={{ color: 'var(--bs-tertiary-color)' }}>
-          <span className="small me-1">Deployed Contracts</span><span className="small me-2 text-primary">{ environmentSchema.deployedContracts.length }</span>
-          <span className="small me-1">Transactions recorded</span><span className="small text-primary">{ environmentSchema.transactionsRecorded.length }</span>
-        </div> */}
+          {/* <span className="small me-1">Deployed Contracts</span><span className="small me-2 text-primary">{ environmentSchema.deployedContracts.length }</span>
+          <span className="small me-1">Transactions recorded</span><span className="small text-primary">{ environmentSchema.transactionsRecorded.length }</span> */}
+        </div>
       </div>
     </>
   )
