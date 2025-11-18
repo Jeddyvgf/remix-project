@@ -100,15 +100,6 @@ export class RunTab extends ViewPlugin {
     this.el = document.createElement('div')
   }
 
-  onActivation(): void {
-    this.on('manager', 'activate', async (profile: { name: string }) => {
-      if (profile.name === 'udappEnv') {
-        this.envUI = await this.call('udappEnv', 'getUI', this.engine, this.blockchain)
-        this.renderComponent()
-      }
-    })
-  }
-
   setupEvents() {
     this.blockchain.events.on('newTransaction', (tx, receipt) => {
       this.emit('newTransaction', tx, receipt)
@@ -116,6 +107,12 @@ export class RunTab extends ViewPlugin {
   }
 
   onActivation(): void {
+    this.on('manager', 'activate', async (profile: { name: string }) => {
+      if (profile.name === 'udappEnv') {
+        this.envUI = await this.call('udappEnv', 'getUI', this.engine, this.blockchain)
+        this.renderComponent()
+      }
+    })
     // Listen for transaction execution events to collect deployment data
     this.on('blockchain','transactionExecuted', (error, from, to, data, useCall, result, timestamp, payload) => {
       console.log('[UDAPP] Transaction execution detected:', result.receipt.contractAddress)
