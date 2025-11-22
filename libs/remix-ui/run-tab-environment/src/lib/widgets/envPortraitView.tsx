@@ -106,7 +106,7 @@ function EnvironmentPortraitView() {
           color: white !important;
         }
       `}</style>
-      <div className='card ms-2 bg-light'>
+      <div className='card ms-2' style={{ backgroundColor: 'var(--custom-onsurface-layer-1)' }}>
         <div className="d-flex align-items-center justify-content-between p-3">
           <div className="d-flex align-items-center">
             <h6 className="my-auto" style={{ color: 'white' }}>{intl.formatMessage({ id: 'udapp.environment' })}</h6>

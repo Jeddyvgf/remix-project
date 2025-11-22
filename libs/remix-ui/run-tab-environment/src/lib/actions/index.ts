@@ -96,7 +96,6 @@ export async function forkState (widgetState: WidgetState, plugin: Plugin & { en
 
 export async function setExecutionContext (provider: Provider, plugin: Plugin, widgetState: WidgetState, dispatch: React.Dispatch<Actions>) {
   if (provider.name !== widgetState.providers.selectedProvider) {
-    dispatch({ type: 'SET_CURRENT_PROVIDER', payload: provider.name })
     if (provider.name === 'walletconnect') {
       await setWalletConnectExecutionContext(plugin, { context: provider.name, fork: provider.config.fork })
     } else {
@@ -104,6 +103,8 @@ export async function setExecutionContext (provider: Provider, plugin: Plugin, w
         plugin.call('notification', 'toast', alertMsg)
       }, async () => {})
     }
+    dispatch({ type: 'SET_CURRENT_PROVIDER', payload: provider.name })
+    plugin.emit('providersChanged', provider)
   }
 }
 

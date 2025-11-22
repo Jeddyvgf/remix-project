@@ -227,12 +227,14 @@ export const EnvironmentToggle = React.forwardRef(
       children,
       onClick,
       className = '',
-      environmentUI
+      environmentUI,
+      style = {}
     }: {
       children: React.ReactNode
       onClick: (e) => void
       className: string
       environmentUI: React.ReactNode
+      style?: React.CSSProperties
     },
     ref: Ref<HTMLDivElement>
   ) => (
@@ -243,6 +245,7 @@ export const EnvironmentToggle = React.forwardRef(
         onClick(e)
       }}
       className={className.replace('dropdown-toggle', '')}
+      style={style}
     >
       <div className="d-flex align-items-center">
         <div className="me-auto text-nowrap text-truncate overflow-hidden font-sm">{children}</div>
@@ -258,10 +261,12 @@ export const AddressToggle = React.forwardRef(
       children,
       onClick,
       className = '',
+      style = {}
     }: {
       children: React.ReactNode
       onClick: (e) => void
       className: string
+      style?: React.CSSProperties
     },
     ref: Ref<HTMLButtonElement>
   ) => (
@@ -272,6 +277,7 @@ export const AddressToggle = React.forwardRef(
         onClick(e)
       }}
       className={className.replace('dropdown-toggle', '')}
+      style={style}
     >
       {children}
     </button>

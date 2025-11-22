@@ -1,4 +1,3 @@
-import { Web3 } from 'web3'
 import { InjectedProviderDefault } from './injected-provider-default'
 
 export class InjectedCustomProvider extends InjectedProviderDefault {
@@ -28,8 +27,25 @@ export class InjectedCustomProvider extends InjectedProviderDefault {
 
   async init() {
     if (!this.chainId && this.rpcUrls.length > 0) {
-      const chainId = await new Web3(this.rpcUrls[0]).eth.getChainId()
-      this.chainId = `0x${chainId.toString(16)}`
+      try {
+        const response = await fetch(this.rpcUrls[0], {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            method: 'eth_chainId',
+            params: [],
+            id: 1
+          })
+        })
+        const data = await response.json()
+        if (data.result) {
+          const chainId = parseInt(data.result, 16)
+          this.chainId = `0x${chainId.toString(16)}`
+        }
+      } catch (error) {
+        console.error('Error fetching chain ID:', error)
+      }
     }
     await super.init()
     await setCustomNetwork(this.chainName, this.chainId, this.rpcUrls, this.nativeCurrency, this.blockExplorerUrls)

@@ -217,6 +217,9 @@
             ],
             "@remix-ui/run-tab-environment": [
               "libs/remix-ui/run-tab-environment/src/index.ts"
+            ],
+            "@remix-ui/run-tab-deploy": [
+              "libs/remix-ui/run-tab-deploy/src/index.ts"
             ]
         }
     }

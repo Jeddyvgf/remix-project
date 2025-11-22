@@ -82,6 +82,7 @@ export class RunTab extends ViewPlugin {
 
   private dispatch: (state: any) => void = () => {}
   private envUI: React.ReactNode = null
+  private deployUI: React.ReactNode = null
   constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
     this.event = new EventManager()
@@ -110,6 +111,10 @@ export class RunTab extends ViewPlugin {
     this.on('manager', 'activate', async (profile: { name: string }) => {
       if (profile.name === 'udappEnv') {
         this.envUI = await this.call('udappEnv', 'getUI', this.engine, this.blockchain)
+        this.renderComponent()
+      }
+      if (profile.name === 'udappDeploy') {
+        this.deployUI = await this.call('udappDeploy', 'getUI', this.engine, this.blockchain, this.compilersArtefacts, this.editor, this.fileManager)
         this.renderComponent()
       }
     })
@@ -248,7 +253,8 @@ export class RunTab extends ViewPlugin {
   renderComponent() {
     this.dispatch && this.dispatch({
       ...this,
-      envUI: this.envUI
+      envUI: this.envUI,
+      deployUI: this.deployUI
     })
   }
 
@@ -256,6 +262,7 @@ export class RunTab extends ViewPlugin {
     return (<>
       <RunTabUI plugin={state} />
       { this.envUI && createPortal(this.envUI, document.getElementById('udappEnvComponent')) }
+      { this.deployUI && createPortal(this.deployUI, document.getElementById('udappDeployComponent')) }
     </>)
   }
 
@@ -263,6 +270,7 @@ export class RunTab extends ViewPlugin {
     return (
       <div>
         <div id="udappEnvComponent"></div>
+        <div id="udappDeployComponent"></div>
         <PluginViewWrapper plugin={this} />
       </div>
     )

@@ -10,7 +10,7 @@ const profile = {
   name: 'udappEnv',
   displayName: 'Udapp Environment',
   description: 'Maintains the schema for deployment and execution environment',
-  methods: ['getUI', 'getSelectedAccount', 'isSmartAccount'],
+  methods: ['getUI', 'getSelectedAccount', 'isSmartAccount', 'getDefaultProvider'],
   events: []
 }
 
@@ -39,6 +39,12 @@ export class EnvironmentPlugin extends Plugin {
       return smartAccounts.some((account: Account) => account.account === address)
     }
     return false
+  }
+
+  getDefaultProvider () {
+    const state = this.getWidgetState?.()
+
+    return state?.providers?.defaultProvider
   }
 
   // getValue: (cb) => {

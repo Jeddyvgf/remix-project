@@ -70,7 +70,7 @@ export type ProviderConfig = {
 
 export type Provider = {
     position: number,
-    category: string,
+    category?: string,
     options: { [key: string]: string }
     dataId: string
     name: string
@@ -157,7 +157,7 @@ export interface Blockchain extends Plugin<any, any> {
   signMessage(message: any, account: any, passphrase: any, cb: any): void;
   web3(): any;
   getTxListener(opts: any): any;
-  runOrCallContractMethod(contractName: any, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any): void;
+  runOrCallContractMethod(contractName: any, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any, finalCb?: any): void;
   context(): "memory" | "blockchain";
   resetAndInit(): void;
   transactionContextAPI: any;

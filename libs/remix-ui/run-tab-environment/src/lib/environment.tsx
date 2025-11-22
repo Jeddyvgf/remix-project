@@ -15,7 +15,7 @@ function EnvironmentWidget({ plugin }: { plugin: Plugin & { engine: Engine, bloc
     if (plugin.setStateGetter) {
       plugin.setStateGetter(() => widgetState)
     }
-  }, [plugin, widgetState])
+  }, [widgetState])
 
   useEffect(() => {
     (async () => {
