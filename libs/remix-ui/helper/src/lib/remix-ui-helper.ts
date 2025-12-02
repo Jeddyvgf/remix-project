@@ -304,3 +304,33 @@ export const processLoading = ({ type, importUrl, contentImport, workspaceProvid
   })
 }
 
+export const getMultiValsString = (values: string[]) => {
+  const valArray = values
+  let ret = ''
+  const valArrayTest = []
+
+  for (let j = 0; j < valArray.length; j++) {
+    if (ret !== '') ret += ','
+    let elVal = valArray[j] || ''
+
+    valArrayTest.push(elVal)
+    elVal = elVal.replace(/(^|,\s+|,)(\d+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted number by quoted number
+    elVal = elVal.replace(/(^|,\s+|,)(0[xX][0-9a-fA-F]+)(\s+,|,|$)/g, '$1"$2"$3') // replace non quoted hex string by quoted hex string
+    if (elVal) {
+      try {
+        JSON.parse(elVal)
+      } catch (e) {
+        elVal = '"' + elVal + '"'
+      }
+    }
+    ret += elVal
+  }
+  const valStringTest = valArrayTest.join('')
+
+  if (valStringTest) {
+    return ret
+  } else {
+    return ''
+  }
+}
+

@@ -17,7 +17,6 @@ function DeployWidget({ plugin }: { plugin: Plugin & { engine: Engine, editor: a
 
   useEffect(() => {
     plugin.on('fileManager', 'currentFileChanged', async (filePath: string) => {
-      console.log('filePath: ', filePath)
       if (filePath && filePath.endsWith('.sol')) {
         const contract: string = await plugin.call('fileManager', 'readFile', filePath)
 
@@ -31,6 +30,12 @@ function DeployWidget({ plugin }: { plugin: Plugin & { engine: Engine, editor: a
             dispatch({ type: 'ADD_CONTRACT_FILE', payload: { name: contractName, filePath } })
           }
         }
+      }
+    })
+
+    plugin.on('fileManager', 'fileClosed', (filePath: string) => {
+      if (filePath && filePath.endsWith('.sol')) {
+        dispatch({ type: 'REMOVE_CONTRACT_FILE', payload: filePath })
       }
     })
     // plugin.blockchain.events.on('newTransaction', (tx, receipt) => {

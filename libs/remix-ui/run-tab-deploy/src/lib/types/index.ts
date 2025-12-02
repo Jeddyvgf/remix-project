@@ -18,12 +18,16 @@ export interface DeployWidgetState {
       isCompiling: boolean
     })[]
   }
+  valueUnit: 'wei' | 'gwei' | 'finney' | 'ether'
+  gasLimit: string
 }
 
 export interface ActionPayloadTypes {
   ADD_CONTRACT_FILE: { name: string, filePath: FilePath },
   UPDATE_COMPILED_CONTRACT: CompiledContractPayload,
-  REMOVE_CONTRACT_FILE: FilePath
+  REMOVE_CONTRACT_FILE: FilePath,
+  SET_VALUE_UNIT: 'wei' | 'gwei' | 'finney' | 'ether',
+  SET_GAS_LIMIT: string
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {

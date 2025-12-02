@@ -3,7 +3,9 @@ import { Actions, DeployWidgetState } from '../types'
 export const deployInitialState: DeployWidgetState = {
   contracts: {
     contractList: []
-  }
+  },
+  valueUnit: 'wei',
+  gasLimit: '0'
 }
 
 export const deployReducer = (state = deployInitialState, action: Actions): DeployWidgetState => {
@@ -41,7 +43,6 @@ export const deployReducer = (state = deployInitialState, action: Actions): Depl
     const existingContract = state.contracts.contractList.find((contract) => contract.name === action.payload.name && contract.filePath === action.payload.filePath)
 
     if (existingContract) {
-      // existingContract.name = action.payload.name
       existingContract.contractData = action.payload.contractData
       existingContract.isUpgradeable = action.payload.isUpgradeable
       existingContract.isCompiled = true
@@ -54,7 +55,7 @@ export const deployReducer = (state = deployInitialState, action: Actions): Depl
       ...state,
       contracts: {
         ...state.contracts,
-        contractList: state.contracts.contractList
+        contractList: [...state.contracts.contractList]
       }
     }
   }
@@ -64,6 +65,20 @@ export const deployReducer = (state = deployInitialState, action: Actions): Depl
     return {
       ...state,
       contracts: { ...state.contracts, contractList }
+    }
+  }
+
+  case 'SET_VALUE_UNIT': {
+    return {
+      ...state,
+      valueUnit: action.payload
+    }
+  }
+
+  case 'SET_GAS_LIMIT': {
+    return {
+      ...state,
+      gasLimit: action.payload
     }
   }
 
