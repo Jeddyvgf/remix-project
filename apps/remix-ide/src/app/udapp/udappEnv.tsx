@@ -47,27 +47,6 @@ export class EnvironmentPlugin extends Plugin {
     return state?.providers?.defaultProvider
   }
 
-  // getValue: (cb) => {
-  //   try {
-  //     const number = plugin.REACT_API.sendValue
-  //     const unit = plugin.REACT_API.sendUnit
-
-  //     cb(null, Web3.utils.toWei(number, unit))
-  //   } catch (e) {
-  //     cb(e)
-  //   }
-  // }
-
-  // getGasLimit: (cb) => {
-  //   try {
-  //     const gasLimit = '0x' + new BN(plugin.REACT_API.gasLimit, 10).toString(16)
-
-  //     cb(null, gasLimit)
-  //   } catch (e) {
-  //     cb(e.message)
-  //   }
-  // }
-
   getUI(engine: Engine, blockchain: Blockchain) {
     this.engine = engine
     this.blockchain = blockchain

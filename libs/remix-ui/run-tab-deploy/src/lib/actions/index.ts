@@ -4,6 +4,7 @@ import { trackMatomoEvent } from "@remix-api"
 import { CompilerAbstract } from "@remix-project/remix-solidity"
 import type { ContractData } from "@remix-project/core-plugin"
 import { execution } from '@remix-project/remix-lib'
+import { IntlShape } from "react-intl"
 
 export async function broadcastCompilationResult (compilerName: string, compileRawResult: CompilationRawResult, plugin: Plugin, dispatch: React.Dispatch<Actions>) {
   const { file, source, languageVersion, data, input } = compileRawResult
@@ -86,3 +87,216 @@ function getContractData (contractName: string, compiler: CompilerAbstract): Con
     metadata: contract.object.metadata
   }
 }
+
+export function deployContract(selectedContract: ContractData, args: string, plugin: Plugin, intl: IntlShape) {
+  if (selectedContract.bytecodeObject.length === 0) {
+    return plugin.call('notification', 'modal', {
+      title: intl.formatMessage({ id: 'udapp.alert' }),
+      message: intl.formatMessage({ id: 'udapp.thisContractMayBeAbstract' }),
+      okLabel: intl.formatMessage({ id: 'udapp.ok' }),
+      cancelLabel: intl.formatMessage({ id: 'udapp.cancel' })
+    })
+  } else {
+
+  }
+}
+
+// const createInstance = (selectedContract, args, deployMode?: DeployMode[]) => {
+//   if (selectedContract.bytecodeObject.length === 0) {
+//     return props.modal(intl.formatMessage({ id: 'udapp.alert' }), intl.formatMessage({ id: 'udapp.thisContractMayBeAbstract' }), intl.formatMessage({ id: 'udapp.ok' }), () => {})
+//   }
+//   if (selectedContract.name !== currentContract && selectedContract.name === 'ERC1967Proxy') selectedContract.name = currentContract
+//   const isProxyDeployment = (deployMode || []).find((mode) => mode === 'Deploy with Proxy')
+//   const isContractUpgrade = (deployMode || []).find((mode) => mode === 'Upgrade with Proxy')
+
+//   if (isProxyDeployment) {
+//     props.modal(
+//       'Deploy Implementation & Proxy (ERC1967)',
+//       deployWithProxyMsg(),
+//       intl.formatMessage({ id: 'udapp.proceed' }),
+//       () => {
+//         props.createInstance(
+//           loadedContractData,
+//           props.gasEstimationPrompt,
+//           props.passphrasePrompt,
+//           props.publishToStorage,
+//           props.mainnetPrompt,
+//           isOverSizePrompt,
+//           args,
+//           deployMode,
+//           isVerifyChecked
+//         )
+//       },
+//       intl.formatMessage({ id: 'udapp.cancel' }),
+//       () => {}
+//     )
+//   } else if (isContractUpgrade) {
+//     props.modal(
+//       'Deploy Implementation & Update Proxy',
+//       upgradeWithProxyMsg(),
+//       intl.formatMessage({ id: 'udapp.proceed' }),
+//       () => {
+//         props.createInstance(
+//           loadedContractData,
+//           props.gasEstimationPrompt,
+//           props.passphrasePrompt,
+//           props.publishToStorage,
+//           props.mainnetPrompt,
+//           isOverSizePrompt,
+//           args,
+//           deployMode,
+//           isVerifyChecked
+//         )
+//       },
+//       intl.formatMessage({ id: 'udapp.cancel' }),
+//       () => {}
+//     )
+//   } else {
+//     props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args, deployMode, isVerifyChecked)
+//   }
+// }
+
+// export const createInstance = async (
+//   plugin: RunTab,
+//   dispatch: React.Dispatch<any>,
+//   selectedContract: ContractData,
+//   gasEstimationPrompt: (msg: string) => JSX.Element,
+//   passphrasePrompt: (msg: string) => JSX.Element,
+//   publishToStorage: (storage: 'ipfs' | 'swarm',
+//   contract: ContractData) => void,
+//   mainnetPrompt: MainnetPrompt,
+//   isOverSizePrompt: (values: OverSizeLimit) => JSX.Element,
+//   args,
+//   deployMode: DeployMode[],
+//   isVerifyChecked: boolean) => {
+//   const isProxyDeployment = (deployMode || []).find(mode => mode === 'Deploy with Proxy')
+//   const isContractUpgrade = (deployMode || []).find(mode => mode === 'Upgrade with Proxy')
+//   const statusCb = (msg: string) => {
+//     const log = logBuilder(msg)
+
+//     return terminalLogger(plugin, log)
+//   }
+
+//   const finalCb = async (error, contractObject, address) => {
+//     if (error) {
+//       const log = logBuilder(error)
+//       return terminalLogger(plugin, log)
+//     }
+
+//     addInstance(dispatch, { contractData: contractObject, address, name: contractObject.name })
+//     const data = await plugin.compilersArtefacts.getCompilerAbstract(contractObject.contract.file)
+//     plugin.compilersArtefacts.addResolvedContract(addressToString(address), data)
+
+//     if (isVerifyChecked) {
+//       trackMatomoEvent(plugin, { category: 'udapp', action: 'DeployAndPublish', name: plugin.REACT_API.networkName, isClick: true })
+
+//       try {
+//         const status = plugin.blockchain.getCurrentNetworkStatus()
+//         if (status.error || !status.network) {
+//           throw new Error(`Could not get network status: ${status.error || 'Unknown error'}`)
+//         }
+//         const currentChainId = parseInt(status.network.id)
+
+//         const response = await fetch('https://chainid.network/chains.json')
+//         if (!response.ok) throw new Error('Could not fetch chains list from chainid.network.')
+//         const allChains = await response.json()
+//         const currentChain = allChains.find(chain => chain.chainId === currentChainId)
+
+//         if (!currentChain) {
+//           const errorMsg = `Could not find chain data for Chain ID: ${currentChainId}. Verification cannot proceed.`
+//           const errorLog = logBuilder(errorMsg)
+//           terminalLogger(plugin, errorLog)
+//           return
+//         }
+
+//         const etherscanApiKey = await plugin.call('config', 'getAppParameter', 'etherscan-access-token')
+
+//         const verificationData = {
+//           chainId: currentChainId.toString(),
+//           currentChain: currentChain,
+//           contractAddress: addressToString(address),
+//           contractName: selectedContract.name,
+//           compilationResult: await plugin.compilersArtefacts.getCompilerAbstract(selectedContract.contract.file),
+//           constructorArgs: args,
+//           etherscanApiKey: etherscanApiKey
+//         }
+
+//         setTimeout(async () => {
+//           await plugin.call('contract-verification', 'verifyOnDeploy', verificationData)
+//         }, 1500)
+
+//       } catch (e) {
+//         const errorMsg = `Verification setup failed: ${e.message}`
+//         const errorLog = logBuilder(errorMsg)
+//         terminalLogger(plugin, errorLog)
+//       }
+
+//     } else {
+//       trackMatomoEvent(plugin, { category: 'udapp', action: 'DeployOnly', name: plugin.REACT_API.networkName, isClick: true })
+//     }
+
+//     if (isProxyDeployment) {
+//       const initABI = contractObject.abi.find(abi => abi.name === 'initialize')
+//       plugin.call('openzeppelin-proxy', 'executeUUPSProxy', addressToString(address), args, initABI, contractObject)
+//     } else if (isContractUpgrade) {
+//       plugin.call('openzeppelin-proxy', 'executeUUPSContractUpgrade', args, addressToString(address), contractObject)
+//     }
+//   }
+
+//   let contractMetadata
+//   try {
+//     contractMetadata = await plugin.call('compilerMetadata', 'deployMetadataOf', selectedContract.name, selectedContract.contract.file)
+//   } catch (error) {
+//     return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+//   }
+
+//   const compilerContracts = getCompilerContracts(plugin)
+//   const confirmationCb = getConfirmationCb(plugin, dispatch, mainnetPrompt)
+
+//   const currentParams = !isProxyDeployment && !isContractUpgrade ? args : ''
+//   let overSize
+//   try {
+//     overSize = await selectedContract.isOverSizeLimit(currentParams)
+//   } catch (error) {
+//     return statusCb(`creation of ${selectedContract.name} errored: ${error.message ? error.message : error}`)
+//   }
+//   if (overSize && (overSize.overSizeEip170 || overSize.overSizeEip3860)) {
+//     return dispatch(displayNotification('Contract code size over limit', isOverSizePrompt(overSize), 'Force Send', 'Cancel', () => {
+//       deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
+//         continueCb: (error, continueTxExecution, cancelCb) => {
+//           continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+//         },
+//         promptCb: (okCb, cancelCb) => {
+//           promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
+//         },
+//         statusCb,
+//         finalCb
+//       }, confirmationCb)
+//     }, () => {
+//       const log = logBuilder(`creation of ${selectedContract.name} canceled by user.`)
+
+//       return terminalLogger(plugin, log)
+//     }))
+//   }
+//   deployContract(plugin, selectedContract, currentParams, contractMetadata, compilerContracts, {
+//     continueCb: (error, continueTxExecution, cancelCb) => {
+//       continueHandler(dispatch, gasEstimationPrompt, error, continueTxExecution, cancelCb)
+//     },
+//     promptCb: (okCb, cancelCb) => {
+//       promptHandler(dispatch, passphrasePrompt, okCb, cancelCb)
+//     },
+//     statusCb,
+//     finalCb
+//   }, confirmationCb)
+// }
+
+// const deployContract = (plugin: RunTab, selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb) => {
+//   trackMatomoEvent(plugin, { category: 'udapp', action: 'DeployContractTo', name: plugin.REACT_API.networkName, isClick: true })
+//   const { statusCb } = callbacks
+
+//   if (!contractMetadata || (contractMetadata && contractMetadata.autoDeployLib)) {
+//     return plugin.blockchain.deployContractAndLibraries(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+//   }
+//   if (Object.keys(selectedContract.bytecodeLinkReferences).length) statusCb(`linking ${JSON.stringify(selectedContract.bytecodeLinkReferences, null, '\t')} using ${JSON.stringify(contractMetadata.linkReferences, null, '\t')}`)
+//   plugin.blockchain.deployContractWithLibrary(selectedContract, args, contractMetadata, compilerContracts, callbacks, confirmationCb)
+// }

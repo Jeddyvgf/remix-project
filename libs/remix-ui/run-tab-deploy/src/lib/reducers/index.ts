@@ -4,8 +4,9 @@ export const deployInitialState: DeployWidgetState = {
   contracts: {
     contractList: []
   },
+  value: 0,
   valueUnit: 'wei',
-  gasLimit: '0'
+  gasLimit: 0
 }
 
 export const deployReducer = (state = deployInitialState, action: Actions): DeployWidgetState => {
@@ -68,6 +69,13 @@ export const deployReducer = (state = deployInitialState, action: Actions): Depl
     }
   }
 
+  case 'SET_VALUE': {
+    return {
+      ...state,
+      value: action.payload
+    }
+  }
+
   case 'SET_VALUE_UNIT': {
     return {
       ...state,
@@ -79,6 +87,26 @@ export const deployReducer = (state = deployInitialState, action: Actions): Depl
     return {
       ...state,
       gasLimit: action.payload
+    }
+  }
+
+  case 'SET_COMPILING': {
+    const contractList = state.contracts.contractList.map((contract) => {
+      if (contract.filePath === action.payload) {
+        return {
+          ...contract,
+          isCompiling: true,
+          isCompiled: false
+        }
+      }
+      return contract
+    })
+    return {
+      ...state,
+      contracts: {
+        ...state.contracts,
+        contractList
+      }
     }
   }
 

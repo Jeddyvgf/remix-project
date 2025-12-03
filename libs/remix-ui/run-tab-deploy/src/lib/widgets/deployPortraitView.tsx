@@ -131,7 +131,18 @@ function DeployPortraitView() {
                               <span className="small">{extractNameFromKey(selectedContract?.filePath) || 'No contract selected'}</span>
                             </div>
                           </div>
-                          <div onClick={(e) => e.stopPropagation()}>
+                          <div onClick={async (e) => {
+                            e.stopPropagation()
+                            if (selectedContract?.filePath) {
+                              dispatch({ type: 'SET_COMPILING', payload: selectedContract.filePath })
+                              try {
+                                await plugin.call('solidity', 'compile', selectedContract.filePath)
+                              } catch (error) {
+                                console.error('Compilation error: ', error)
+                                dispatch({ type: 'SET_COMPILING', payload: selectedContract.filePath })
+                              }
+                            }
+                          }}>
                             {selectedContract?.isCompiled && (
                               <span className={`badge border p-2 text-success`} style={{ fontWeight: 'light', backgroundColor: 'var(--custom-onsurface-layer-3)' }}>
                                 <i className="fas fa-check"></i> Compiled
@@ -171,7 +182,16 @@ function DeployPortraitView() {
                                 <span className="small">{extractNameFromKey(contract.filePath)}</span>
                               </div>
                             </div>
-                            <div onClick={(e) => e.stopPropagation()}>
+                            <div onClick={async (e) => {
+                              e.stopPropagation()
+                              dispatch({ type: 'SET_COMPILING', payload: contract.filePath })
+                              try {
+                                await plugin.call('solidity', 'compile', contract.filePath)
+                              } catch (error) {
+                                console.error('Compilation error: ', error)
+                                dispatch({ type: 'SET_COMPILING', payload: contract.filePath })
+                              }
+                            }}>
                               {contract.isCompiled && (
                                 <span className={`badge border p-2 text-success`} style={{ fontWeight: 'light', backgroundColor: 'var(--custom-onsurface-layer-3)' }}>
                                   <i className="fas fa-check"></i> Compiled
@@ -291,9 +311,11 @@ function DeployPortraitView() {
                 </label>
                 <div className="position-relative flex-fill">
                   <input
-                    type="text"
+                    type="number"
                     className="form-control form-control-sm border-0"
                     placeholder="000000000000000000000000000000000"
+                    value={widgetState.value}
+                    onChange={(e) => dispatch({ type: 'SET_VALUE', payload: parseInt(e.target.value) || 0 })}
                     style={{ backgroundColor: 'var(--bs-body-bg)', color: 'white', flex: 1, paddingRight: '4rem' }}
                   />
                   <Dropdown style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}>
@@ -335,31 +357,31 @@ function DeployPortraitView() {
                       zIndex: 1
                     }}
                     onClick={() => {
-                      if (widgetState.gasLimit === '0') {
+                      if (widgetState.gasLimit === 0) {
                         // Switch from auto to custom - set a default value
-                        dispatch({ type: 'SET_GAS_LIMIT', payload: '3000000' })
+                        dispatch({ type: 'SET_GAS_LIMIT', payload: 3000000 })
                       } else {
                         // Switch from custom to auto - set to 0
-                        dispatch({ type: 'SET_GAS_LIMIT', payload: '0' })
+                        dispatch({ type: 'SET_GAS_LIMIT', payload: 0 })
                       }
                     }}
                   >
-                    {widgetState.gasLimit === '0' ? 'auto' : 'custom'}
+                    {widgetState.gasLimit === 0 ? 'auto' : 'custom'}
                   </span>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control form-control-sm border-0"
                     placeholder="0000000"
                     value={widgetState.gasLimit}
-                    onChange={(e) => dispatch({ type: 'SET_GAS_LIMIT', payload: e.target.value })}
-                    disabled={widgetState.gasLimit === '0'}
+                    onChange={(e) => dispatch({ type: 'SET_GAS_LIMIT', payload: parseInt(e.target.value) })}
+                    disabled={widgetState.gasLimit === 0}
                     style={{
                       backgroundColor: 'var(--bs-body-bg)',
                       color: 'white',
                       flex: 1,
                       paddingLeft: '4rem',
-                      opacity: widgetState.gasLimit === '0' ? 0.6 : 1,
-                      cursor: widgetState.gasLimit === '0' ? 'not-allowed' : 'text'
+                      opacity: widgetState.gasLimit === 0 ? 0.6 : 1,
+                      cursor: widgetState.gasLimit === 0 ? 'not-allowed' : 'text'
                     }}
                   />
                 </div>
