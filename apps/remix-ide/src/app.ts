@@ -112,6 +112,7 @@ import TabProxy from './app/panels/tab-proxy.js'
 import { Plugin } from '@remixproject/engine'
 import BottomBarPanel from './app/components/bottom-bar-panel'
 import { TemplateExplorerModalPlugin } from './app/plugins/template-explorer-modal'
+import { Circles } from './app/plugins/circles'
 
 // Tracking now handled by this.track() method using MatomoManager
 
@@ -410,6 +411,8 @@ class AppComponent {
 
     const walletConnect = new WalletConnect()
 
+    const circles = new Circles()
+
     this.engine.register([
       permissionHandler,
       this.layout,
@@ -467,7 +470,8 @@ class AppComponent {
       scriptRunnerUI,
       remixAI,
       remixAiAssistant,
-      walletConnect
+      walletConnect,
+      circles
     ])
 
     //---- fs plugin
@@ -745,7 +749,7 @@ class AppComponent {
     })
 
     // activate solidity plugin
-    this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy', 'scriptRunnerBridge'])
+    this.appManager.activatePlugin(['solidity', 'udapp', 'deploy-libraries', 'link-libraries', 'openzeppelin-proxy', 'scriptRunnerBridge', 'circles'])
 
     if (isElectron()){
       this.appManager.activatePlugin(['desktopHost'])
