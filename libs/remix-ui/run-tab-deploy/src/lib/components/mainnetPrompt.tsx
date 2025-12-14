@@ -1,24 +1,12 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { CopyToClipboard } from '@remix-ui/clipboard'
 import { formatUnits, parseUnits } from 'ethers'
-import { Plugin } from '@remixproject/engine'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { DeployPlugin } from 'apps/remix-ide/src/app/udapp/udappDeploy'
+import { DeployUdappTx, DeployUdappNetwork } from '../types'
 
-type Tx = {
-    from: string,
-    to: string,
-    data: string,
-    gasLimit?: string
-  }
-
-type Network = {
-    name: string,
-    lastBlock: {
-      baseFeePerGas: string
-    }
-  }
-
-export function MainnetPrompt(txRunner: Plugin, tx: Tx, network: Network, amount: string, gasEstimation: string) {
+export function MainnetPrompt({ udappDeploy, tx, network, amount, gasEstimation }: { udappDeploy: DeployPlugin, tx: DeployUdappTx, network: DeployUdappNetwork, amount: string, gasEstimation: string }) {
   const intl = useIntl()
   const [baseFee, setBaseFee] = useState<string>('')
   const [transactionFee, setTransactionFee] = useState<string>('')
@@ -26,10 +14,10 @@ export function MainnetPrompt(txRunner: Plugin, tx: Tx, network: Network, amount
 
   useEffect(() => {
     (async () => {
-      const maxPriorityFee = await txRunner.call('udappDeploy', 'getMaxPriorityFee')
+      const maxPriorityFee = await udappDeploy.getMaxPriorityFee()
       setMaxPriorityFee(maxPriorityFee)
 
-      const gasPriceValue = await txRunner.call('blockchain', 'determineGasPrice')
+      const gasPriceValue = await udappDeploy.call('blockchain', 'determineGasPrice')
       if (gasPriceValue) onGasPriceChange(gasPriceValue)
       if (network && network.lastBlock && network.lastBlock.baseFeePerGas) {
         const baseFee = formatUnits(BigInt(network.lastBlock.baseFeePerGas), 'gwei')
@@ -43,22 +31,22 @@ export function MainnetPrompt(txRunner: Plugin, tx: Tx, network: Network, amount
     const maxFee = value
     if (BigInt(network.lastBlock.baseFeePerGas) > BigInt(parseUnits(maxFee, 'gwei'))) {
       setTransactionFee(intl.formatMessage({ id: 'udapp.transactionFee' }))
-      txRunner.call('udappDeploy', 'setGasPriceStatus', false)
-      txRunner.call('udappDeploy', 'setConfirmSettings', true)
+      udappDeploy.setGasPriceStatus(false)
+      udappDeploy.setConfirmSettings(true)
       return
     } else {
-      txRunner.call('udappDeploy', 'setGasPriceStatus', true)
-      txRunner.call('udappDeploy', 'setConfirmSettings', false)
+      udappDeploy.setGasPriceStatus(true)
+      udappDeploy.setConfirmSettings(false)
     }
-    txRunner.call('udappDeploy', 'setMaxFee', value)
+    udappDeploy.setMaxFee(value)
   }
 
   const onGasPriceChange = (value: string) => {
-    txRunner.call('udappDeploy', 'setGasPrice', value)
+    udappDeploy.setGasPrice(value)
   }
 
   const onMaxPriorityFeeChange = (value: string) => {
-    txRunner.call('udappDeploy', 'setMaxPriorityFee', value)
+    udappDeploy.setMaxPriorityFee(value)
     setMaxPriorityFee(value)
   }
 

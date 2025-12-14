@@ -3,7 +3,7 @@ import { Engine, Plugin } from '@remixproject/engine'
 import { DeployWidget } from '@remix-ui/run-tab-deploy'
 import type { Blockchain } from '../../blockchain/blockchain'
 import type { CompilerArtefacts } from '@remix-project/core-plugin'
-import { DeployWidgetState, Actions } from '@remix-ui/run-tab-deploy'
+import { DeployWidgetState, Actions, GasEstimationPrompt, MainnetPrompt, DeployUdappTx, DeployUdappNetwork } from '@remix-ui/run-tab-deploy'
 import BN from 'bn.js'
 
 const profile = {
@@ -68,6 +68,14 @@ export class DeployPlugin extends Plugin {
     return this.getWidgetState()?.confirmSettings
   }
 
+  getGasEstimationPrompt(msg: string): React.ReactElement {
+    return <GasEstimationPrompt msg={msg} />
+  }
+
+  getMainnetPrompt(tx: DeployUdappTx, network: DeployUdappNetwork, amount: string, gasEstimation: string): React.ReactElement {
+    return <MainnetPrompt udappDeploy={this} tx={tx} network={network} amount={amount} gasEstimation={gasEstimation} />
+  }
+
   setGasPriceStatus(status: boolean) {
     this.getDispatch()({ type: 'SET_GAS_PRICE_STATUS', payload: status })
   }
@@ -82,6 +90,10 @@ export class DeployPlugin extends Plugin {
 
   setGasPrice(price: string) {
     this.getDispatch()({ type: 'SET_GAS_PRICE', payload: price })
+  }
+
+  setMaxFee(fee: string) {
+    this.getDispatch()({ type: 'SET_MAX_FEE', payload: fee })
   }
 
   getUI(engine: Engine, blockchain: Blockchain, editor: any) {

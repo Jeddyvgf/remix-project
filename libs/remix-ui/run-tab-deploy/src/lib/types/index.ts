@@ -40,7 +40,8 @@ export interface ActionPayloadTypes {
   SET_GAS_PRICE_STATUS: boolean,
   SET_CONFIRM_SETTINGS: boolean,
   SET_MAX_PRIORITY_FEE: string,
-  SET_GAS_PRICE: string
+  SET_GAS_PRICE: string,
+  SET_MAX_FEE: string
 }
 
 export interface Action<T extends keyof ActionPayloadTypes> {
@@ -69,5 +70,19 @@ export type CompiledContractPayload = {
   filePath: FilePath,
   contractData: ContractData,
   isUpgradeable: boolean
+}
+
+export type DeployUdappTx = {
+  from: string,
+  to: string,
+  data: string,
+  gasLimit?: string
+}
+
+export type DeployUdappNetwork = {
+  name: string,
+  lastBlock: {
+    baseFeePerGas: string
+  }
 }
 

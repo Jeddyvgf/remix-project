@@ -135,40 +135,40 @@ export function RunTabUI(props: RunTabProps) {
   //   const compilerState = await plugin.call('solidity', 'getCompilerState')
 
     // if no contract file is open, don't do anything
-    if (compilerState.target !== null) {
-      const targetChainId = runTab.chainId
-      const ideDefault = fetchDetails && fetchDetails.evmVersion !== null ? fetchDetails.evmVersion : 'osaka'
-      const IsCompatible = isChainCompatible(ideDefault, targetChainId)
-      const chain = await returnCompatibleChain(ideDefault, targetChainId)
-      if (chain === undefined) {
-        return 'Not Found'
-      } else {
-        if (!IsCompatible) {
-        //show modal
-          plugin.call('notification', 'modal', {
-            id: 'evm-chainId-incompatible',
-            title: 'Incompatible EVM for the selected chain',
-            message: <div className="px-3">
-              <p>The smart contract has not been compiled with an EVM version that is compatible with the selected chain.</p>
-              <ul className="px-3">
-                <li>Have Remix switch to a compatible EVM version for this chain and recompile the contract.</li>
-                <li>Cancel to keep the current EVM version.</li>
-              </ul>
-              <p>To manually change the EVM version, go to the Advanced Configurations section of the Solidity compiler.</p>
-            </div>,
-            modalType: 'modal',
-            okLabel: 'Switch EVM and Recompile',
-            cancelLabel: 'Cancel',
-            okFn: () => checkEvmChainCompatibilityOkFunction(chain),
-            cancelFn: () => {}
-          })
-          return 'Failed'
-        } else {
-          return 'Passed'
-        }
-      }
-    }
-  }
+  //   if (compilerState.target !== null) {
+  //     const targetChainId = runTab.chainId
+  //     const ideDefault = fetchDetails && fetchDetails.evmVersion !== null ? fetchDetails.evmVersion : 'osaka'
+  //     const IsCompatible = isChainCompatible(ideDefault, targetChainId)
+  //     const chain = await returnCompatibleChain(ideDefault, targetChainId)
+  //     if (chain === undefined) {
+  //       return 'Not Found'
+  //     } else {
+  //       if (!IsCompatible) {
+  //       //show modal
+  //         plugin.call('notification', 'modal', {
+  //           id: 'evm-chainId-incompatible',
+  //           title: 'Incompatible EVM for the selected chain',
+  //           message: <div className="px-3">
+  //             <p>The smart contract has not been compiled with an EVM version that is compatible with the selected chain.</p>
+  //             <ul className="px-3">
+  //               <li>Have Remix switch to a compatible EVM version for this chain and recompile the contract.</li>
+  //               <li>Cancel to keep the current EVM version.</li>
+  //             </ul>
+  //             <p>To manually change the EVM version, go to the Advanced Configurations section of the Solidity compiler.</p>
+  //           </div>,
+  //           modalType: 'modal',
+  //           okLabel: 'Switch EVM and Recompile',
+  //           cancelLabel: 'Cancel',
+  //           okFn: () => checkEvmChainCompatibilityOkFunction(chain),
+  //           cancelFn: () => {}
+  //         })
+  //         return 'Failed'
+  //       } else {
+  //         return 'Passed'
+  //       }
+  //     }
+  //   }
+  // }
 
   // useEffect(() => {
   //   if (!props.initialState) {

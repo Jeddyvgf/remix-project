@@ -16,7 +16,6 @@ import type { CompilerArtefacts } from '@remix-project/core-plugin'
 import { ForkedVMStateProvider } from '../providers/vm-provider'
 import { Recorder } from '../tabs/runTab/model/recorder'
 import { EnvDropdownLabelStateType } from 'libs/remix-ui/run-tab/src/lib/types'
-import { App } from 'octokit'
 
 export const providerLogos = {
   'injected-metamask-optimism': ['assets/img/optimism-ethereum-op-logo.png', 'assets/img/metamask.png'],
@@ -83,6 +82,7 @@ export class RunTab extends ViewPlugin {
   private dispatch: (state: any) => void = () => {}
   private envUI: React.ReactNode = null
   private deployUI: React.ReactNode = null
+
   constructor(blockchain: Blockchain, config: any, fileManager: any, editor: any, filePanel: any, compilersArtefacts: CompilerArtefacts, networkModule: any, fileProvider: any, engine: any) {
     super(profile)
     this.event = new EventManager()
@@ -276,13 +276,13 @@ export class RunTab extends ViewPlugin {
     )
   }
 
-  // async onReady(api) {
-  //   console.log('onReady', api)
-  //   this.REACT_API = api
-  // }
+  onReady(api) {
+    this.REACT_API = api
+  }
 
   async onInitDone() {
     const udapp = this // eslint-disable-line
+
     const descriptions = {
       'vm-cancun': 'Deploy to the in-browser virtual machine running the Cancun fork.',
       'vm-shanghai': 'Deploy to the in-browser virtual machine running the Shanghai fork.',

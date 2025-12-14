@@ -144,6 +144,13 @@ export const deployReducer = (state = deployInitialState, action: Actions): Depl
     }
   }
 
+  case 'SET_MAX_FEE': {
+    return {
+      ...state,
+      maxFee: action.payload
+    }
+  }
+
   default:
     return state
   }

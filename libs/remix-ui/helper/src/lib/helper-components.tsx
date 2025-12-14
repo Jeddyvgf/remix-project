@@ -1,3 +1,4 @@
+import React from 'react'
 import { LayoutCompatibilityReport } from '@openzeppelin/upgrades-core/dist/storage/report'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { CompileOptionsProps } from '../types/compilerTypes'
@@ -266,14 +267,5 @@ export const EtherscanConfigDescription = () => {
         </a> <FormattedMessage id="settings.etherscanAccessTokenText3" />
       </p>
     </>
-  )
-}
-
-export const gasEstimationPrompt = (msg: string) => {
-  return (
-    <div>
-      <FormattedMessage id="udapp.gasEstimationPromptText" /> <br />
-      {msg}
-    </div>
   )
 }

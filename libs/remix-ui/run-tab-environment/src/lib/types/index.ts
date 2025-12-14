@@ -160,7 +160,6 @@ export interface Blockchain extends Plugin<any, any> {
   runOrCallContractMethod(contractName: any, contractAbi: any, funABI: any, contract: any, value: any, address: any, callType: any, lookupOnly: any, logMsg: any, logCallback: any, outputCb: any, confirmationCb: any, continueCb: any, promptCb: any, finalCb?: any): void;
   context(): "memory" | "blockchain";
   resetAndInit(): void;
-  transactionContextAPI: any;
   addProvider(provider: any): void;
   removeProvider(name: any): void;
   /** Listen on New Transaction. (Cannot be done inside constructor because txlistener doesn't exist yet) */
@@ -176,7 +175,7 @@ export interface Blockchain extends Plugin<any, any> {
   newAccount(_password: any, passwordPromptCb: any, cb: any): any;
   /** Get the balance of an address, and convert wei to ether */
   getBalanceInEther(address: any): Promise<string>;
-  pendingTransactionsCount(): number;
+  pendingTransactionsCount(): Promise<number>;
   /**
      * This function send a tx only to Remix VM or testnet, will return an error for the mainnet
      * SHOULD BE TAKEN CAREFULLY!

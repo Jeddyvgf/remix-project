@@ -14,8 +14,6 @@ const { createSmartAccountClient } = require("permissionless")
 const { toSafeSmartAccount } = require("permissionless/accounts")
 const { createPimlicoClient } = require("permissionless/clients/pimlico")
 import { Plugin } from '@remixproject/engine'
-// @ts-ignore
-import { MainnetPrompt, gasEstimationPrompt } from '@remix-ui/helper'
 
 export class TxRunnerWeb3 {
   event
@@ -51,8 +49,8 @@ export class TxRunnerWeb3 {
     const isCreation = !tx.to
     const isPersonalMode = await this._api.call('blockchain', 'getProvider') === 'web3' ? (Registry.getInstance().get('config').api).get('settings/personal-mode') : false
 
-    return new Promise(async (resolve, reject) => {
-      if (isPersonalMode) {
+    if (isPersonalMode) {
+      return new Promise((resolve, reject) => {
         this._api.call('notification', 'prompt', {
           id: 'passphrase-requested',
           title: 'Passphrase requested',
@@ -78,30 +76,29 @@ export class TxRunnerWeb3 {
             reject(new Error('Canceled by user.'))
           }
         })
-      } else {
-        try {
-          if (tx.fromSmartAccount) {
-            const { txHash, contractAddress } = await this.sendUserOp(tx, network.id)
-            resolve(await this.broadcastTx(tx, txHash, isCreation, true, contractAddress))
-          } else {
-            const web3 = await this._api.call('blockchain', 'getWeb3')
-            const res = await (await web3.getSigner(tx.from)).sendTransaction(tx)
-            resolve(await this.broadcastTx(tx, res.hash, isCreation, false, null))
-          }
-        } catch (e) {
-          if (!e.message) e.message = ''
-          if (e.error) {
-            e.message = e.message + ' ' + e.error
-          }
-          console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
-          // in case the receipt is available, we consider that only the execution failed but the transaction went through.
-          // So we don't consider this to be an error.
-          if (e.receipt) resolve(await this.broadcastTx(tx, e.receipt.hash, isCreation, false, null))
-          else reject(e)
+      })
+    } else {
+      try {
+        if (tx.fromSmartAccount) {
+          const { txHash, contractAddress } = await this.sendUserOp(tx, network.id)
+          return this.broadcastTx(tx, txHash, isCreation, true, contractAddress)
+        } else {
+          const web3 = await this._api.call('blockchain', 'getWeb3')
+          const res = await (await web3.getSigner(tx.from)).sendTransaction(tx)
+          return this.broadcastTx(tx, res.hash, isCreation, false, null)
         }
+      } catch (e) {
+        if (!e.message) e.message = ''
+        if (e.error) {
+          e.message = e.message + ' ' + e.error
+        }
+        console.log(`Send transaction failed: ${e.message} . if you use an injected provider, please check it is properly unlocked. `)
+        // in case the receipt is available, we consider that only the execution failed but the transaction went through.
+        // So we don't consider this to be an error.
+        if (e.receipt) return this.broadcastTx(tx, e.receipt.hash, isCreation, false, null)
+        else throw (e)
       }
-    })
-
+    }
   }
 
   async broadcastTx (tx, resp, isCreation: boolean, isUserOp, contractAddress) {
@@ -257,7 +254,7 @@ export class TxRunnerWeb3 {
           return this._api.call('notification', 'modal', {
             id: 'gas-estimation-failed',
             title: 'Gas estimation failed',
-            message: gasEstimationPrompt(msg),
+            message: await this._api.call('udappDeploy', 'getGasEstimationPrompt', msg),
             okLabel: 'Send Transaction',
             okFn: () => {
               return this._executeTx(tx, network, null)
@@ -274,7 +271,7 @@ export class TxRunnerWeb3 {
 
   async confirmTransaction (tx, network, gasEstimation) {
     const amount = await this._api.call('blockchain', 'fromWei', tx.value, true, 'ether')
-    const content = MainnetPrompt(this._api, tx, network, amount, gasEstimation)
+    const content = await this._api.call('udappDeploy', 'getMainnetPrompt', tx, network, amount, gasEstimation)
 
     this._api.call('notification', 'modal', {
       id: 'confirm-transaction',

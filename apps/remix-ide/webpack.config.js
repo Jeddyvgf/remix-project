@@ -24,6 +24,11 @@ class EmitSoljsonPlugin {
       compilation.hooks.processAssets.tapPromise(
         { name: 'EmitSoljsonPlugin', stage: Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL },
         async () => {
+          const assetName = 'assets/js/soljson.js'
+          // Check if asset already exists to avoid conflicts
+          if (compilation.getAsset(assetName)) {
+            return
+          }
           try {
             const defaultVersion = require('../../package.json').defaultVersion
             const url = `https://binaries.soliditylang.org/bin/${defaultVersion}`
@@ -43,7 +48,7 @@ class EmitSoljsonPlugin {
             })
             if (RawSource) {
               // Match previous public path: assets/js/soljson.js
-              compilation.emitAsset('assets/js/soljson.js', new RawSource(data))
+              compilation.emitAsset(assetName, new RawSource(data))
             }
           } catch (e) {
             console.warn('EmitSoljsonPlugin: skipping emit due to error:', e.message)

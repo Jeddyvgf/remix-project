@@ -14,6 +14,7 @@ import { forkAt } from './execution/forkAt'
 import * as typeConversion from './execution/typeConversion'
 import { TxRunnerVM } from './execution/txRunnerVM'
 import { TxRunnerWeb3 } from './execution/txRunnerWeb3'
+import { TxRunner } from './execution/txRunner'
 import * as txResultHelper from './helpers/txResultHelper'
 import * as eip7702Constants from './helpers/eip7702Constants'
 import { EOACode7702AuthorizationList } from '@ethereumjs/util'
@@ -63,6 +64,7 @@ const execution = {
   txListener: TxListener,
   TxRunnerWeb3: TxRunnerWeb3,
   TxRunnerVM: TxRunnerVM,
+  TxRunner: TxRunner,
   typeConversion: typeConversion,
   LogsManager,
   forkAt
