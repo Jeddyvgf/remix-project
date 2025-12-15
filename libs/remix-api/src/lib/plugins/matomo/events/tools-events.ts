@@ -131,6 +131,7 @@ export interface TemplateExplorerModalEvent extends MatomoEventBase {
     | 'createWorkspaceWithGenericTemplate'
     | 'importFiles'
     | 'importHttps'
+    | 'topCardGitClone'
 }
 
 export interface ScriptExecutorEvent extends MatomoEventBase {
