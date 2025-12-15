@@ -46,7 +46,6 @@ import { getUncommittedFiles } from '../utils/gitStatusFilter'
 import { AppModal, ModalTypes } from '@remix-ui/app'
 
 import { gitUIPanels } from '@remix-ui/git'
-import * as templates from '@remix-project/remix-ws-templates'
 import { Plugin } from "@remixproject/engine";
 import { CustomRemixApi, branch, cloneInputType } from '@remix-api'
 import { scriptTemplates } from './scriptTemplates'
@@ -458,9 +457,8 @@ export const loadWorkspacePreset = async (template: WorkspaceTemplate = 'remixDe
       // @ts-ignore
       let files = {}
       if (template === 'ozerc20' || template === 'ozerc721' || template === 'ozerc1155') {
-        files = await templateWithContent[template](opts, contractContent, contractName)
-      }
-      else {
+        files = await templateWithContent[template](opts, plugin, { contractContent, contractName })
+      } else {
         files = await templateWithContent[template](opts, plugin)
       }
       for (const file in files) {
