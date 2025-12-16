@@ -145,9 +145,9 @@ export class AmpQueryHandler extends BaseToolHandler {
       return this.createSuccessResult(result);
 
     } catch (error) {
-      console.error('Amp query error:', error);
+      console.error('Amp query error:', error?.cause?.rawMessage);
 
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error?.cause?.rawMessage
 
       // Show error notification
       plugin.call('notification', 'toast', `Amp query failed: ${errorMessage}`);
@@ -174,6 +174,14 @@ export interface AmpDatasetManifestResult {
   datasetName: string;
   version: string;
   error?: string;
+}
+
+/**
+ * Amp Dataset List result types
+ */
+export interface AmpDatasetListResult {
+  success: boolean;
+  result: any
 }
 
 /**
@@ -250,12 +258,63 @@ export class AmpDatasetManifestHandler extends BaseToolHandler {
       return this.createSuccessResult(result);
 
     } catch (error) {
-      console.error('Amp dataset manifest fetch error:', error);
+      console.error('Amp dataset manifest fetch error:', error?.cause?.rawMessage);
 
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error?.cause?.rawMessage
 
       // Show error notification
       plugin.call('notification', 'toast', `Failed to fetch manifest: ${errorMessage}`);
+
+      return this.createErrorResult(`Failed to fetch manifest: ${errorMessage}`);
+    }
+  }
+}
+
+/**
+ * Amp Dataset Manifest Tool Handler
+ */
+export class AmpDatasetListHandler extends BaseToolHandler {
+  name = 'amp_dataset_manifest';
+  description = 'Fetch list of available public dataset in Amp';
+  inputSchema = {
+    type: 'object',
+    properties: {},
+    required: []
+  };
+
+  getPermissions(): string[] {
+    return ['amp:dataset:manifest'];
+  }
+
+  validate(args: AmpDatasetManifestArgs): boolean | string {
+    return true;
+  }
+
+  async execute(args: AmpDatasetManifestArgs, plugin: Plugin): Promise<IMCPToolResult> {
+    try {
+      // Show a notification that the manifest is being fetched
+      const url = `https://common-corsproxy.api.remix.live/api/trpc/datasets.list?proxy=https://playground.amp.thegraph.com`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const list = await response.json();
+
+      const result: AmpDatasetListResult = {
+        success: true,
+        result: list.result
+      };
+
+      console.log(result)
+      return this.createSuccessResult(result);
+
+    } catch (error) {
+      console.error('Amp dataset listt fetch error:', error);
+
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
       return this.createErrorResult(`Failed to fetch manifest: ${errorMessage}`);
     }
@@ -282,6 +341,14 @@ export function createAmpTools(): RemixToolDefinition[] {
       category: ToolCategory.ANALYSIS,
       permissions: ['amp:dataset:manifest'],
       handler: new AmpDatasetManifestHandler()
+    },
+    {
+      name: 'amp_dataset_list',
+      description: 'Fetch list of available dataset',
+      inputSchema: new AmpDatasetListHandler().inputSchema,
+      category: ToolCategory.ANALYSIS,
+      permissions: ['amp:dataset:list'],
+      handler: new AmpDatasetListHandler()
     }
   ];
 }
