@@ -565,12 +565,12 @@ export const TabsUI = (props: TabsUIProps) => {
   let dropDown
   if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
     dropDown = (
-        <><RunScriptDropdown
-          onNotify={onNotify}
-          plugin={props.plugin}
-          onRun={handleRunScript}
-          disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-        />
+      <><RunScriptDropdown
+        onNotify={onNotify}
+        plugin={props.plugin}
+        onRun={handleRunScript}
+        disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+      />
       </>
     )
   } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
