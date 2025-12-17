@@ -373,8 +373,7 @@ export function RemixUiTopbar() {
   }
 
   const createWorkspace = async () => {
-    await plugin.call('manager', 'activatePlugin', 'templateSelection')
-    await plugin.call('tabs', 'focus', 'templateSelection')
+    openTemplateExplorer()
   }
 
   const renameCurrentWorkspace = (workspaceName?: string) => {

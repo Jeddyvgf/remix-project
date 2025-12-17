@@ -14,7 +14,7 @@ import { MenuItems, WorkSpaceState, WorkspaceMetadata } from './types'
 import { contextMenuActions } from './utils'
 import FileExplorerContextMenu from './components/file-explorer-context-menu'
 import { customAction } from '@remixproject/plugin-api'
-import { AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
+import { appActionTypes, AppContext, appPlatformTypes, platformContext } from '@remix-ui/app'
 import { TrackingContext } from '@remix-ide/tracking'
 import { MatomoEvent, HomeTabEvent, WorkspaceEvent } from '@remix-api'
 import { ElectronMenu } from './components/electron-menu'
@@ -383,8 +383,11 @@ export function Workspace() {
     )
   }
   const createWorkspace = async () => {
-    await global.plugin.call('manager', 'activatePlugin', 'templateSelection')
-    await global.plugin.call('tabs', 'focus', 'templateSelection')
+    await global.plugin.call('templateexplorermodal', 'updateTemplateExplorerInFileMode', false)
+    appContext.appStateDispatch({
+      type: appActionTypes.showGenericModal,
+      payload: true
+    })
   }
 
   const deleteCurrentWorkspace = () => {
