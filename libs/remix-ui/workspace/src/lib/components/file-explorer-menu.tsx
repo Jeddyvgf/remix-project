@@ -18,7 +18,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false)
 
-  const menuItems = [
+  let menuItems = [
     {
       action: 'newBlankFile',
       title: 'New blank file',
@@ -66,7 +66,7 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       title: 'Import files from local file system',
       icon: 'fa-solid fa-upload',
       placement: 'top',
-      platforms: [appPlatformTypes.web, appPlatformTypes.desktop]
+      platforms: [appPlatformTypes.web]
     },
     {
       action: 'importFromHttps',
@@ -90,6 +90,8 @@ export const FileExplorerMenu = (props: FileExplorerMenuProps) => {
       platforms: [appPlatformTypes.desktop]
     }
   ]
+
+  menuItems = menuItems.filter((item) => item.platforms.includes(platform))
 
   const itemAction = async (action: string) => {
     if (action === 'localFileSystem') {
