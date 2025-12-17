@@ -557,51 +557,51 @@ export const TabsUI = (props: TabsUIProps) => {
     mainLabel = 'Run SQL'
   } else {
     mainLabel = (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts')
-                      ? (compileState === 'compiling' ? "Run script" :
-                        compileState === 'compiled' ? "Run script" : "Run script")
-                      : (compileState === 'compiling' ? "Compiling..." :
-                        compileState === 'compiled' ? "Compiled" : "Compile")
+      ? (compileState === 'compiling' ? "Run script" :
+        compileState === 'compiled' ? "Run script" : "Run script")
+      : (compileState === 'compiling' ? "Compiling..." :
+        compileState === 'compiled' ? "Compiled" : "Compile")
   }
   let dropDown
   if (tabsState.currentExt === 'js' || tabsState.currentExt === 'ts') {
     dropDown = (
-                <><RunScriptDropdown
-                  onNotify={onNotify}
-                  plugin={props.plugin}
-                  onRun={handleRunScript}
-                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                />
-              </>
-            )
+        <><RunScriptDropdown
+          onNotify={onNotify}
+          plugin={props.plugin}
+          onRun={handleRunScript}
+          disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+        />
+      </>
+    )
   } else if (tabsState.currentExt === 'sol' || tabsState.currentExt === 'yul') {
     dropDown = (
-              <>
-                <CompileDropdown
-                  tabPath={active().substr(active().indexOf('/') + 1, active().length)}
-                  compiledFileName={active()}
-                  plugin={props.plugin}
-                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                  onRequestCompileAndPublish={handleCompileAndPublish}
-                  setCompileState={setCompileState}
-                />
-              </>
-            )
+      <>
+        <CompileDropdown
+          tabPath={active().substr(active().indexOf('/') + 1, active().length)}
+          compiledFileName={active()}
+          plugin={props.plugin}
+          disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+          onRequestCompileAndPublish={handleCompileAndPublish}
+          setCompileState={setCompileState}
+        />
+      </>
+    )
   } else if (tabsState.currentExt === 'sql') {
     dropDown = (
-              <>
-                <AmpSqlDropdown
-                  onNotify={onNotify}
-                  plugin={props.plugin}
-                  disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
-                />
-              </>
-            )
+      <>
+        <AmpSqlDropdown
+          onNotify={onNotify}
+          plugin={props.plugin}
+          disabled={!(PlayExtList.includes(tabsState.currentExt)) || compileState === 'compiling'}
+        />
+      </>
+    )
   } else {
     dropDown = (
-              <>
-                <EmptyDropdown/>
-              </>
-            )
+      <>
+        <EmptyDropdown/>
+      </>
+    )
   }
 
   return (
