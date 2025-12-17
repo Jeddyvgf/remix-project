@@ -91,6 +91,7 @@ export const TopbarProvider = (props: TopbarProviderProps) => {
 
   const openRecentFolder = async (path: string) => {
     try {
+      await plugin.call('fileManager', 'closeAllFiles')
       await plugin.call('fs', 'setWorkingDir', path)
       // Refresh recent folders list since order might have changed
       setTimeout(fetchRecentFolders, 200)
