@@ -28,6 +28,7 @@ import { RemixCodeActionProvider } from './providers/codeActionProvider'
 import './remix-ui-editor.css'
 import { circomLanguageConfig, circomTokensProvider } from './syntaxes/circom'
 import { noirLanguageConfig, noirTokensProvider } from './syntaxes/noir'
+import { sqlLanguageConfig, sqlTokensProvider } from './syntaxes/sql'
 import type { IPosition, IRange } from 'monaco-editor'
 import { GenerationParams } from '@remix/remix-ai-core';
 import { RemixInLineCompletionProvider } from './providers/inlineCompletionProvider'
@@ -475,6 +476,8 @@ export const EditorUI = (props: EditorUIProps) => {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-toml')
     } else if (file.language === 'noir') {
       monacoRef.current.editor.setModelLanguage(file.model, 'remix-noir')
+    } else if (file.language === 'sql') {
+      monacoRef.current.editor.setModelLanguage(file.model, 'remix-sql')
     }
   }, [props.currentFile, props.isDiff])
 
@@ -1202,6 +1205,7 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.register({ id: 'remix-circom' })
     monacoRef.current.languages.register({ id: 'remix-toml' })
     monacoRef.current.languages.register({ id: 'remix-noir' })
+    monacoRef.current.languages.register({ id: 'remix-sql' })
 
     // Allow JSON schema requests
     monacoRef.current.languages.json.jsonDefaults.setDiagnosticsOptions({ enableSchemaRequest: true })
@@ -1285,6 +1289,9 @@ export const EditorUI = (props: EditorUIProps) => {
     monacoRef.current.languages.setMonarchTokensProvider('remix-noir', noirTokensProvider as any)
     monacoRef.current.languages.setLanguageConfiguration('remix-noir', noirLanguageConfig as any)
     monacoRef.current.languages.registerInlineCompletionsProvider('remix-noir', inlineCompletionProviderRef.current)
+
+    monacoRef.current.languages.setMonarchTokensProvider('remix-sql', sqlTokensProvider as any)
+    monacoRef.current.languages.setLanguageConfiguration('remix-sql', sqlLanguageConfig as any)
 
     monacoRef.current.languages.registerDefinitionProvider('remix-solidity', new RemixDefinitionProvider(props, monaco))
     monacoRef.current.languages.registerDocumentHighlightProvider('remix-solidity', new RemixHighLightProvider(props, monaco))

@@ -59,7 +59,8 @@ export default class Editor extends Plugin {
       nr: 'move',
       toml: 'toml',
       html: 'html',
-      css: 'css'
+      css: 'css',
+      sql: 'sql'
     }
 
     this.activated = false
