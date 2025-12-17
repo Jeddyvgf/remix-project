@@ -11,7 +11,7 @@ const profile = {
 
 export class AmpPlugin extends Plugin {
   constructor() {
-    super(profile)   
+    super(profile)
   }
 
   async performAmpQuery (query: string, baseUrl: string, authToken: string) {
