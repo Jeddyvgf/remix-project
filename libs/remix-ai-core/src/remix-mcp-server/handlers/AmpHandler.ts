@@ -32,56 +32,6 @@ export interface AmpQueryResult<T = any> {
 }
 
 /**
- * Create an Amp client with the given configuration
- */
-async function createAmpClient(baseUrl?: string, authToken?: string) {
-  // Dynamic import for ES module packages
-  // @ts-ignore - ES module dynamic import
-  const { createConnectTransport } = await import("@connectrpc/connect-web");
-  // @ts-ignore - ES module dynamic import
-  const { createAuthInterceptor, createClient } = await import("@edgeandnode/amp");
-
-  const ampBaseUrl = baseUrl || "/amp";
-
-  const transport = createConnectTransport({
-    baseUrl: ampBaseUrl,
-    /**
-     * If present, adds the auth token to the interceptor path.
-     * This adds it to the connect-rpc transport layer and is passed to requests.
-     * This is REQUIRED for querying published datasets through the gateway
-     */
-    interceptors: authToken
-      ? [createAuthInterceptor(authToken)]
-      : undefined,
-  });
-
-  return createClient(transport);
-}
-
-/**
- * Performs the given query with the AmpClient instance.
- * Waits for all batches to complete/resolve before returning.
- * @param query the query to run
- * @param baseUrl optional base URL for the Amp server
- * @param authToken optional authentication token
- * @returns an array of the results from all resolved batches
- */
-async function performAmpQuery<T = any>(
-  query: string,
-  baseUrl?: string,
-  authToken?: string
-): Promise<Array<T>> {
-  const ampClient = await createAmpClient(baseUrl, authToken)
-  const data: Array<T> = []
-
-  for await (const batch of ampClient.query(query)) {
-    data.push(...batch)
-  }
-
-  return data
-}
-
-/**
  * Amp Query Tool Handler
  */
 export class AmpQueryHandler extends BaseToolHandler {
@@ -126,11 +76,7 @@ export class AmpQueryHandler extends BaseToolHandler {
       const authToken: string | undefined = await plugin.call('config', 'getEnv', 'AMP_QUERY_TOKEN');
       const baseUrl: string | undefined = await plugin.call('config', 'getEnv', 'AMP_QUERY_URL');
       // Perform the Amp query
-      const data = await performAmpQuery(
-        args.query,
-        baseUrl,
-        authToken
-      );
+      const data = await plugin.call('amp', 'performAmpQuery', args.query, baseUrl, authToken)
 
       const result: AmpQueryResult = {
         success: true,
@@ -235,9 +181,7 @@ export class AmpDatasetManifestHandler extends BaseToolHandler {
       // Show a notification that the manifest is being fetched
       plugin.call('notification', 'toast', `Fetching manifest for ${args.datasetName}@${args.version}...`);
 
-      const url = `https://api.registry.amp.staging.thegraph.com/api/v1/datasets/${args.datasetName}/versions/${args.version}/manifest`;
-
-      const response = await fetch(url);
+      const response = await plugin.call('amp', 'fetchManifest', args.datasetName, args.version)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -290,12 +234,10 @@ export class AmpDatasetListHandler extends BaseToolHandler {
     return true;
   }
 
-  async execute(args: AmpDatasetManifestArgs, plugin: Plugin): Promise<IMCPToolResult> {
+  async execute(args: any, plugin: Plugin): Promise<IMCPToolResult> {
     try {
       // Show a notification that the manifest is being fetched
-      const url = `https://common-corsproxy.api.remix.live/api/trpc/datasets.list?proxy=https://playground.amp.thegraph.com`;
-
-      const response = await fetch(url);
+      const response = await plugin.call('amp', 'listDatasets')
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

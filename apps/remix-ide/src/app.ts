@@ -29,7 +29,7 @@ import { ContractFlattener } from './app/plugins/contractFlattener'
 
 import { WalkthroughService } from './walkthroughService'
 
-import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler } from '@remix-project/core-plugin'
+import { OffsetToLineColumnConverter, CompilerMetadata, CompilerArtefacts, FetchAndCompile, CompilerImports, GistHandler, AmpPlugin } from '@remix-project/core-plugin'
 
 import { Registry } from '@remix-project/remix-lib'
 import { ConfigPlugin } from './app/plugins/config'
@@ -341,6 +341,9 @@ class AppComponent {
 
     const blockchain = new Blockchain(Registry.getInstance().get('config').api)
 
+    // ----------------- amp (thegraph) ------------------------
+    const amp = new AmpPlugin()
+
     // ----------------- compilation metadata generation service ---------
     const compilerMetadataGenerator = new CompilerMetadata()
     // ----------------- compilation result service (can keep track of compilation results) ----------------------------
@@ -472,7 +475,8 @@ class AppComponent {
       scriptRunnerUI,
       remixAI,
       remixAiAssistant,
-      walletConnect
+      walletConnect,
+      amp
     ])
 
     //---- fs plugin
