@@ -244,16 +244,14 @@ export class AmpDatasetListHandler extends BaseToolHandler {
       }
 
       const list = await response.json()
-  
       const result: AmpDatasetListResult = {
         success: true,
         result: list.result?.data?.json?.datasets.map((d) => {
-            const short = {
-              latest_version: d.latest_version
-            }
-            return { indexing_chains: d.indexing_chains, description: d.description, ...short }
+          const short = {
+            latest_version: d.latest_version
           }
-        )
+          return { indexing_chains: d.indexing_chains, description: d.description, ...short }
+        })
       };
 
       console.log(result)
